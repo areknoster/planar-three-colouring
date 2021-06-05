@@ -17,6 +17,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="QuikGraph" Version="2.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="QuikGraph" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Planar3Coloring\Planar3Coloring.csproj" />
+  </ItemGroup>
 </Project>
