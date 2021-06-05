@@ -10,25 +10,25 @@ namespace Planar3Coloring
 {
     class PlanarSeparator
     {
-        private AdjacencyGraph<Vertex, IEdge<Vertex>> Graph { get; set; }
+        private UndirectedGraph<int, IEdge<int>> Graph { get; set; }
         private int N { get; set; }
         private int SeparatorSize { get; set; }
-        public PlanarSeparator(AdjacencyGraph<Vertex, IEdge<Vertex>> graph)
+        public PlanarSeparator(UndirectedGraph<int, IEdge<int>> graph)
         {
             Graph = graph.Clone();
             N = graph.Vertices.Count();
             SeparatorSize = (int)(Math.Sqrt(N) * SeparatorConditions.B);
         }
-        public HashSet<Vertex> FindSeparator()
+        public HashSet<int> FindSeparator()
         {
             //Phase 1
-            List<HashSet<Vertex>> BFSLevels;
-            AdjacencyGraph<Vertex, IEdge<Vertex>> BFSTree;
-            Dictionary<Vertex, (int, int)> BFSDict;
+            List<HashSet<int>> BFSLevels;
+            UndirectedGraph<int, IEdge<int>> BFSTree;
+            Dictionary<int, (int, int)> BFSDict;
             (BFSLevels, BFSTree, BFSDict) = BFS.GetBFSTree(Graph, Graph.Vertices.First());
             //BFSLevels - HashSet with vertices for each level
             //BFSTree - just BFS tree with edges going down to top
-            //BFSDict - Key - vertex; Value - level and number on level
+            //BFSDict - Key - int; Value - level and number on level
 
             //Find mi level
             int nodesNumber = 0;
@@ -37,7 +37,7 @@ namespace Planar3Coloring
                 nodesNumber += BFSLevels[level++].Count;
 
             //Assign vertices from mi level to separator
-            HashSet<Vertex> S = BFSLevels[level];
+            HashSet<int> S = BFSLevels[level];
 
             //Check constraints
             if (S.Count < SeparatorSize)
@@ -56,7 +56,7 @@ namespace Planar3Coloring
                 d++;
             }
             S = BFSLevels[m.Value];
-            foreach (Vertex v in BFSLevels[M.Value])
+            foreach (int v in BFSLevels[M.Value])
                 S.Add(v);
 
             //Check constraints
@@ -79,85 +79,98 @@ namespace Planar3Coloring
             //Phase 3
             //Reduce 0 to m levels
             for (int i = 0; i <= m; i++)
-                foreach (Vertex v in BFSLevels[i])
+                foreach (int v in BFSLevels[i])
                     BFSTree.RemoveVertex(v);
-            Vertex root = new Vertex();
+            int root = new int();
             BFSTree.AddVertex(root);
-            foreach (Vertex v in BFSLevels[m.Value + 1])
-                BFSTree.AddEdge(new Edge<Vertex>(root, v));
+            foreach (int v in BFSLevels[m.Value + 1])
+                BFSTree.AddEdge(new Edge<int>(root, v));
 
             //Reduce levels below M
             for (int i = M.Value; i < BFSLevels.Count(); i++)
-                foreach (Vertex v in BFSLevels[i])
+                foreach (int v in BFSLevels[i])
                     BFSTree.RemoveVertex(v);
-           
-            //Triangulate
-            AdjacencyGraph<Vertex, IEdge<Vertex>> T = Triangulate(BFSTree);
 
-            HashSet<Vertex> fundamentalCycleVertices = new HashSet<Vertex>();
+            //Triangulate
+            UndirectedGraph<int, IEdge<int>> T = Triangulate(BFSTree);
+
+            HashSet<int> fundamentalCycleVertices = new HashSet<int>();
             int innerVerticesCount = 0;
             int outerVerticesCount = BFSTree.VertexCount;
 
-            List<IEdge<Vertex>> nonTreeEdges = T.Edges.ToList();            
-            foreach (IEdge<Vertex> e in BFSTree.Edges)
-                nonTreeEdges.Remove(e);
-
-            IEdge<Vertex> edge = nonTreeEdges[0];
+            IEdge<int> edge = T.Edges.First();
 
             while (outerVerticesCount > 2 * N / 3 || innerVerticesCount > 2 * N / 3)
             {
-                //Pick nontree edge
-                if (outerVerticesCount>innerVerticesCount)//Expand cycle - pick edge incident to edge from lower level
-                {
-                    
-                }
-                else//Reduce cycle - pick edge incident to edge from upper level
-                {
-
-                }
-
                 //Find fundamental cycle
-                Vertex source = edge.Source;
-                Vertex target = edge.Target;
+                fundamentalCycleVertices = new HashSet<int>();
+                int v1 = edge.Source;
+                int v2 = edge.Target;
 
                 //Equalize levels
-                (int level, int number) sourcePos;
-                (int level, int number) targetPos;
-                BFSDict.TryGetValue(edge.Source, out sourcePos);
-                BFSDict.TryGetValue(edge.Target, out targetPos);
-                if (sourcePos.level > targetPos.level) //source is below target
+                (int level, int number) v1Pos;
+                (int level, int number) v2Pos;
+                BFSDict.TryGetValue(edge.Source, out v1Pos);
+                BFSDict.TryGetValue(edge.Target, out v2Pos);
+                if (v1Pos.level < v2Pos.level)//v1 is always below v2
                 {
-                    fundamentalCycleVertices.Add(source);
-                    source = BFSTree.OutEdges(source).First().Target;
+                    v1 += v2;
+                    v2 = v1 - v2;
+                    v1 -= v2;
                 }
-                else
-                {
-                    fundamentalCycleVertices.Add(target);
-                    target = BFSTree.OutEdges(target).First().Target;
-                }
+                //Pick nontree edge
+                BFSDict.TryGetValue(v1, out v1Pos);
+                BFSDict.TryGetValue(v2, out v2Pos);
+                (int level, int pos) v3Pos;
+                int v3;
+                if (outerVerticesCount > innerVerticesCount)//Expand cycle - pick edge incident to edge from lower level
+                    foreach(IEdge<int> e in T.AdjacentEdges(v1))
+                    { 
+                        v3 = e.GetOtherVertex(v1);
+                        BFSDict.TryGetValue(v3, out v3Pos);
+                        if (v3Pos.level + 1 == v1Pos.level)
+                        {
+                            fundamentalCycleVertices.Add(v3);
+                            v2 = BFSTree.AdjacentEdges(v2).First(e => e.Source == v1).Target;
+                            break;
+                        }
+                    }
+                else//Reduce cycle - pick edge incident to edge from upper level
+                    foreach(IEdge<int> e in T.AdjacentEdges(v2))
+                    {
+                        v3 = e.GetOtherVertex(v2);
+                        BFSDict.TryGetValue(v3, out v3Pos);
+                        if (v3Pos.level - 1 == v2Pos.level)
+                        {
+                            fundamentalCycleVertices.Add(v3);
+                            v2 = BFSTree.AdjacentEdges(v1).First(e => e.Source == v1).Target;
+                            break;
+                        }
+                    }
+                //What if no edge to expand or reduce cycle?
 
                 //Find common ancestor 
-                while (source != target)
+                while (v1 != v2)
                 {
-                    BFSDict.TryGetValue(edge.Source, out sourcePos);
-                    BFSDict.TryGetValue(edge.Target, out targetPos);
-                    innerVerticesCount += Math.Abs(sourcePos.level - targetPos.level);
+                    BFSDict.TryGetValue(edge.Source, out v1Pos);
+                    BFSDict.TryGetValue(edge.Target, out v2Pos);
+                    innerVerticesCount += Math.Abs(v1Pos.number - v2Pos.number)-1;
 
                     //Add vertices to fundamental cycle
-                    fundamentalCycleVertices.Add(source);
-                    fundamentalCycleVertices.Add(target);
+                    fundamentalCycleVertices.Add(v1);
+                    fundamentalCycleVertices.Add(v2);
 
                     //Edges in BFSTree are down to top
-                    source = BFSTree.OutEdges(source).First().Target;
-                    target = BFSTree.OutEdges(target).First().Target;
+                    v1 = BFSTree.AdjacentEdges(v1).First(e => e.Source == v1).Target;
+                    v2 = BFSTree.AdjacentEdges(v2).First(e => e.Source == v2).Target;
                 }
-                fundamentalCycleVertices.Add(source);
+                fundamentalCycleVertices.Add(v1);
 
                 outerVerticesCount = BFSTree.VertexCount - fundamentalCycleVertices.Count - innerVerticesCount;
             }
 
             //Add vertices from fundamental cycle to separator
-            foreach (Vertex v in fundamentalCycleVertices)
+            foreach (int v in fundamentalCycleVertices)
                 S.Add(v);
 
             return S;
