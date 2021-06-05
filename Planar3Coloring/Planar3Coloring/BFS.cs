@@ -9,53 +9,53 @@ namespace Planar3Coloring
 {
     static class BFS
     {
-        public static (List<HashSet<Vertex>>, AdjacencyGraph<Vertex, IEdge<Vertex>>, Dictionary<Vertex, (int, int)>) GetBFSTree(AdjacencyGraph<Vertex, IEdge<Vertex>> graph, Vertex root)
+        public static (List<HashSet<int>>, UndirectedGraph<int, IEdge<int>>, Dictionary<int, (int, int)>) GetBFSTree(UndirectedGraph<int, IEdge<int>> graph, int root)
         {
-            AdjacencyGraph<Vertex, IEdge<Vertex>> BFSTree = new AdjacencyGraph<Vertex, IEdge<Vertex>>();
-            List<HashSet<Vertex>> levels = new List<HashSet<Vertex>>();
-            Dictionary<Vertex, (int, int)> dict = new Dictionary<Vertex, (int, int)>();
+            UndirectedGraph<int, IEdge<int>> BFSTree = new UndirectedGraph<int, IEdge<int>>();
+            List<HashSet<int>> levels = new List<HashSet<int>>();
+            Dictionary<int, (int, int)> dict = new Dictionary<int, (int, int)>();
 
-            List<Vertex> visited = new List<Vertex>();
+            List<int> visited = new List<int>();
             int level = 0;
-            int vertexNumberOnLevel = 0;
-            levels[level] = new HashSet<Vertex>();
+            int intNumberOnLevel = 0;
+            levels[level] = new HashSet<int>();
             
-            List<Vertex> queue = new List<Vertex>();
-            Vertex nextLevelMark = null;
+            List<int> queue = new List<int>();
+            int nextLevelMark = -1;
             
             queue.Add(root);
             queue.Add(nextLevelMark);
 
             while (queue.Count>0)
             {
-                Vertex v = queue.First();
+                int v = queue.First();
                 queue.RemoveAt(0);
 
                 //Moving to next level
-                if (v == null)
+                if (v == -1)
                 {
                     level++;
                     if (queue.Count == 0)
                         break;
                     queue.Add(nextLevelMark);
-                    levels[level] = new HashSet<Vertex>();
-                    vertexNumberOnLevel = 0;
+                    levels[level] = new HashSet<int>();
+                    intNumberOnLevel = 0;
                     continue;
                 }
                
                 levels[level].Add(v);
                 visited.Add(v);
-                dict.Add(v, (level, vertexNumberOnLevel));
+                dict.Add(v, (level, intNumberOnLevel));
                 BFSTree.AddVertex(v);
-                vertexNumberOnLevel++;
+                intNumberOnLevel++;
 
                 //Add all v neighbours to queue
-                foreach (IEdge<Vertex> e in graph.OutEdges(v))
+                foreach (IEdge<int> e in graph.AdjacentEdges(v))
                     if (!visited.Contains(e.Target))
                     {
                         queue.Add(e.Target);
                         BFSTree.AddVertex(e.Target);
-                        BFSTree.AddEdge(new Edge<Vertex>(e.Target, e.Source));
+                        BFSTree.AddEdge(new Edge<int>(e.Target, e.Source));
                     }
             }
             return (levels, BFSTree, dict);
