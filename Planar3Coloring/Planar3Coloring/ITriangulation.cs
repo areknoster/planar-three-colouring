@@ -2,8 +2,8 @@
 
 namespace Planar3Coloring
 {
-    interface ITriangulation<TVertex>
+    public interface ITriangulation
     {
-        public IGraph<TVertex, IEdge<TVertex>> Triangulate(IGraph<TVertex, IEdge<TVertex>> graph);
+        public UndirectedGraph<int, IEdge<int>> Triangulate(UndirectedGraph<int, IEdge<int>> graph);
     }
 }
