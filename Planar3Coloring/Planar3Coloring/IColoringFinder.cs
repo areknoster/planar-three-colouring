@@ -5,6 +5,6 @@ namespace Planar3Coloring
 {
     public interface IColoringFinder
     {
-        public IEnumerable<GraphColor[]> Find3Colorings(UndirectedGraph<int, IEdge<int>> graph);
+        public GraphColor[] Find3Colorings(UndirectedGraph<int, IEdge<int>> graph);
     }
 }
