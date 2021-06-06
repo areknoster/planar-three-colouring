@@ -8,24 +8,16 @@ using System.Threading.Tasks;
 
 namespace Planar3Coloring
 {
-    class PlanarSeparator
+    static class PlanarSeparator
     {
-        private UndirectedGraph<int, IEdge<int>> Graph { get; set; }
-        private int N { get; set; }
-        private int SeparatorSize { get; set; }
-        public PlanarSeparator(UndirectedGraph<int, IEdge<int>> graph)
-        {
-            Graph = graph.Clone();
-            N = graph.Vertices.Count();
-            SeparatorSize = (int)(Math.Sqrt(N) * SeparatorConditions.B);
-        }
-        public HashSet<int> FindSeparator()
+        public static HashSet<int> FindSeparator(UndirectedGraph<int, IEdge<int>> graph)
         {
             //Phase 1
+            int N = graph.VertexCount;
             List<HashSet<int>> BFSLevels;
             UndirectedGraph<int, IEdge<int>> BFSTree;
             Dictionary<int, (int, int)> BFSDict;
-            (BFSLevels, BFSTree, BFSDict) = BFS.GetBFSTree(Graph, Graph.Vertices.First());
+            (BFSLevels, BFSTree, BFSDict) = BFS.GetBFSTree(graph, graph.Vertices.First());
             //BFSLevels - HashSet with vertices for each level
             //BFSTree - just BFS tree with edges going down to top
             //BFSDict - Key - int; Value - level and number on level
@@ -40,7 +32,7 @@ namespace Planar3Coloring
             HashSet<int> S = BFSLevels[level];
 
             //Check constraints
-            if (S.Count < SeparatorSize)
+            if (S.Count < (int)(Math.Sqrt(N) * SeparatorConditions.B))
                 return S;
 
             //Phase 2
