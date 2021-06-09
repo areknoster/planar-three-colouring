@@ -31,7 +31,7 @@ namespace Planar3Coloring
                 int v = queue.Dequeue();
 
                 //Moving to next level
-                if (v == -1)
+                if (v == nextLevelMark)
                 {
                     level++;
                     if (queue.Count == 0)
