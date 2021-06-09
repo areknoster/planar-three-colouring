@@ -1,4 +1,5 @@
 ﻿using QuikGraph;
+using QuikGraph.Algorithms.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,7 +133,7 @@ namespace Planar3Coloring
             HashSet<int> vertices = g.Vertices.ToHashSet();
             while(vertices.Count>0)
             {
-                UndirectedGraph<int, IEdge<int>> component = new UndirectedGraph<int, IEdge<int>>();
+                UndirectedGraph<int, IEdge<int>> component = new UndirectedGraph<int, IEdge<int>>(false);
                 Queue<int> queue = new Queue<int>();
                 int v = vertices.First();
                 component.AddVertex(v);

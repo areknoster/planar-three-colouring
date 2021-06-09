@@ -11,11 +11,11 @@ namespace Planar3Coloring
     {
         public static (List<HashSet<int>>, UndirectedGraph<int, IEdge<int>>, Dictionary<int, (int, int)>) GetBFSTree(UndirectedGraph<int, IEdge<int>> graph, int root)
         {
-            UndirectedGraph<int, IEdge<int>> BFSTree = new UndirectedGraph<int, IEdge<int>>();
+            UndirectedGraph<int, IEdge<int>> BFSTree = new UndirectedGraph<int, IEdge<int>>(false);
             List<HashSet<int>> levels = new List<HashSet<int>>();
             Dictionary<int, (int, int)> dict = new Dictionary<int, (int, int)>();
 
-            List<int> visited = new List<int>();
+            bool[] enqueued = new bool[graph.VertexCount];
             int level = 0;
             int intNumberOnLevel = 0;
             levels.Add(new HashSet<int>());
@@ -24,6 +24,7 @@ namespace Planar3Coloring
             int nextLevelMark = -1;
             
             queue.Enqueue(root);
+            enqueued[root] = true;
             queue.Enqueue(nextLevelMark);
 
             while (queue.Count>0)
@@ -43,18 +44,16 @@ namespace Planar3Coloring
                 }
 
                 levels[level].Add(v);
-                visited.Add(v);
                 dict.Add(v, (level, intNumberOnLevel));
-                BFSTree.AddVertex(v);
                 intNumberOnLevel++;
 
                 //Add all v neighbours to queue
                 foreach (IEdge<int> e in graph.AdjacentEdges(v))
-                    if (!visited.Contains(e.Target))
+                    if (!enqueued[e.Target])
                     {
                         queue.Enqueue(e.Target);
-                        BFSTree.AddVertex(e.Target);
-                        BFSTree.AddEdge(new Edge<int>(e.Target, e.Source));
+                        enqueued[e.Target] = true;
+                        BFSTree.AddVerticesAndEdge(new Edge<int>(e.Source, e.Target));
                     }
             }
             return (levels, BFSTree, dict);
