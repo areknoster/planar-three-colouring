@@ -1,10 +1,7 @@
 ﻿using QuikGraph;
-using QuikGraph.Algorithms.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Planar3Coloring.Triangulation;
 
 namespace Planar3Coloring
@@ -27,7 +24,7 @@ namespace Planar3Coloring
             int nodesNumber = 0;
             int level = 0;
             while (nodesNumber < N / 2)
-                nodesNumber += BFSLevels[level++].Count;
+                nodesNumber += BFSLevels[++level].Count;
 
             //Assign vertices from mi level to separator
             HashSet<int> S = BFSLevels[level];
