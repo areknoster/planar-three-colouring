@@ -11,7 +11,7 @@ namespace Planar3Coloring
     {
         public static (List<HashSet<int>>, UndirectedGraph<int, IEdge<int>>, Dictionary<int, (int, int)>) GetBFSTree(UndirectedGraph<int, IEdge<int>> graph, int root)
         {
-            UndirectedGraph<int, IEdge<int>> BFSTree = new UndirectedGraph<int, IEdge<int>>();
+            UndirectedGraph<int, IEdge<int>> BFSTree = new UndirectedGraph<int, IEdge<int>>(false);
             List<HashSet<int>> levels = new List<HashSet<int>>();
             Dictionary<int, (int, int)> dict = new Dictionary<int, (int, int)>();
 
@@ -43,9 +43,7 @@ namespace Planar3Coloring
                 }
 
                 levels[level].Add(v);
-                visited.Add(v);
                 dict.Add(v, (level, intNumberOnLevel));
-                BFSTree.AddVertex(v);
                 intNumberOnLevel++;
 
                 //Add all v neighbours to queue
@@ -53,8 +51,8 @@ namespace Planar3Coloring
                     if (!visited.Contains(e.Target))
                     {
                         queue.Enqueue(e.Target);
-                        BFSTree.AddVertex(e.Target);
-                        BFSTree.AddEdge(new Edge<int>(e.Target, e.Source));
+                        visited.Add(v);
+                        BFSTree.AddVerticesAndEdge(e);
                     }
             }
             return (levels, BFSTree, dict);

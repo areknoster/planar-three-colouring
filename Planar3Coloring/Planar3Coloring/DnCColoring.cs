@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Planar3Coloring
 {
-    class DnCColoring : IColoringFinder
+    public class DnCColoring : IColoringFinder
     {
         private UndirectedGraph<int, IEdge<int>> _graph;
         private HashSet<GraphColor>[] _availableColors;
@@ -38,6 +38,9 @@ namespace Planar3Coloring
             }
             return _coloring.Select(c => c.Value).ToArray();
         }
+
+        public string Name => "DnCColoring";
+
         private bool BruteForceColoring(List<UndirectedGraph<int, IEdge<int>>> components, HashSet<int> s)
         {
             //Pick first vertex from separator
@@ -129,7 +132,7 @@ namespace Planar3Coloring
             HashSet<int> vertices = g.Vertices.ToHashSet();
             while(vertices.Count>0)
             {
-                UndirectedGraph<int, IEdge<int>> component = new UndirectedGraph<int, IEdge<int>>();
+                UndirectedGraph<int, IEdge<int>> component = new UndirectedGraph<int, IEdge<int>>(false);
                 Queue<int> queue = new Queue<int>();
                 int v = vertices.First();
                 component.AddVertex(v);
