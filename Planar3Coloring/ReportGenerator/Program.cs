@@ -6,9 +6,9 @@ namespace ReportGenerator
     {
         static void Main(string[] args)
         {
-            
-            var generator = new ReportGenerator(1000, 0.15);
-            generator.BruteForceVersusOptimized();
+            var examples = RandomExamplesGenerator.GenerateRandomExamples(50, 10, 0.15);
+            var generator = new ReportGenerator(examples);
+            generator.RunAlgorithms();
         }
     }
 }

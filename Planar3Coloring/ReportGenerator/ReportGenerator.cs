@@ -12,9 +12,9 @@ namespace ReportGenerator
         public static List<Example> GenerateRandomExamples(int numberOfRandom, int step, double density)
         {
             var examples = new List<Example>(numberOfRandom);
-            for (int i = 3; i <= numberOfRandom; i++)
+            for (int i = 0; i <= numberOfRandom; i++)
             {
-                var g =  GraphGenerator.SimpleRandomPlanar(i, density);
+                var g =  GraphGenerator.SimpleRandomPlanar(i * step, density);
                 examples.Add(new Example($"random with {g.VertexCount} vertices and {g.EdgeCount} edges", g));
             }
 
@@ -41,14 +41,12 @@ namespace ReportGenerator
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
-                //new DnCColoring(),
+                new DnCColoring(),
             };
+            this.examples = examples;
 
         }
-        
-
-
-        public void BruteForceVersusOptimized()
+        public void RunAlgorithms()
         {
             foreach (var example in examples)
             {
