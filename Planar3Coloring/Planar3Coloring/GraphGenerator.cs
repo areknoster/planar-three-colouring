@@ -11,7 +11,7 @@ namespace Planar3Coloring
     {
         public static UndirectedGraph<int, IEdge<int>> Clique(int vertices)
         {
-            var g = new UndirectedGraph<int, IEdge<int>>();
+            var g = new UndirectedGraph<int, IEdge<int>>(false);
             for (int i = 0; i < vertices; i++)
             {
                 g.AddVertex(i);
