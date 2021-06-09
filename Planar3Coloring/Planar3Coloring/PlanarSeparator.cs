@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Planar3Coloring.Triangulation;
 
 namespace Planar3Coloring
 {
@@ -84,7 +85,8 @@ namespace Planar3Coloring
                     BFSTree.RemoveVertex(v);
 
             //Triangulate
-            UndirectedGraph<int, IEdge<int>> T = Triangulate(BFSTree);
+            var triangulization = new InternalTriangulation();
+            UndirectedGraph<int, IEdge<int>> T = triangulization.Triangulate(BFSTree);
 
             HashSet<int> fundamentalCycleVertices = new HashSet<int>();
             int innerVerticesCount = 0;

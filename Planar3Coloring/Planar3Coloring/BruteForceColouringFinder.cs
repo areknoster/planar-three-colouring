@@ -7,6 +7,8 @@ namespace Planar3Coloring
 {
     public class BruteForceColouringFinder : IColoringFinder
     {
+        public string Name => "BruteForceColoring";
+
         public GraphColor[] Find3Colorings(UndirectedGraph<int, IEdge<int>> graph)
         {
             var finder = new GraphColoringFinder(graph);
