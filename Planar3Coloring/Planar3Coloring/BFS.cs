@@ -18,7 +18,7 @@ namespace Planar3Coloring
             List<int> visited = new List<int>();
             int level = 0;
             int intNumberOnLevel = 0;
-            levels[level] = new HashSet<int>();
+            levels.Add(new HashSet<int>());
             
             Queue<int> queue = new Queue<int>();
             int nextLevelMark = -1;
@@ -37,11 +37,11 @@ namespace Planar3Coloring
                     if (queue.Count == 0)
                         break;
                     queue.Enqueue(nextLevelMark);
-                    levels[level] = new HashSet<int>();
+                    levels.Add(new HashSet<int>());
                     intNumberOnLevel = 0;
                     continue;
                 }
-               
+
                 levels[level].Add(v);
                 visited.Add(v);
                 dict.Add(v, (level, intNumberOnLevel));
