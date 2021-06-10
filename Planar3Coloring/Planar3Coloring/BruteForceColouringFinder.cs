@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using QuikGraph;
 using System.Linq;
 using System;
+using System.Diagnostics;
 
 namespace Planar3Coloring
 {
@@ -19,6 +20,7 @@ namespace Planar3Coloring
         {
             private GraphColor?[] coloring;
             private UndirectedGraph<int, IEdge<int>> graph;
+            private Stopwatch sw;
 
             public GraphColoringFinder(UndirectedGraph<int, IEdge<int>> graph)
             {
@@ -28,6 +30,7 @@ namespace Planar3Coloring
 
             public GraphColor[] Find()
             {
+                sw = Stopwatch.StartNew();
                 if (!TryColors(0))
                 {
                     return null;
@@ -37,6 +40,10 @@ namespace Planar3Coloring
 
             private bool TryColors(int vertex)
             {
+                if (vertex % 5 == 0 && sw.Elapsed.Seconds >= 30)
+                {
+                    throw new TimeoutException();
+                }
                 if (vertex == graph.VertexCount) {
                     return true;
                 }

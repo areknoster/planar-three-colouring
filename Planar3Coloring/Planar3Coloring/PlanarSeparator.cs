@@ -30,7 +30,7 @@ namespace Planar3Coloring
             HashSet<int> S = BFSLevels[level];
 
             //Check constraints
-            if (S.Count < (int)(Math.Sqrt(N) * SeparatorConditions.B))
+            if (S.Count <= (int)(Math.Sqrt(N) * SeparatorConditions.B))
                 return S;
 
             //Phase 2
@@ -38,10 +38,10 @@ namespace Planar3Coloring
             int d = 0;
             while (level - d >= 0 && level + d < BFSLevels.Count() && (!m.HasValue || !M.HasValue))
             {
-                if (!m.HasValue && BFSLevels[level - d].Count() < 2 * (Math.Sqrt(N) - d))
+                if (!m.HasValue && BFSLevels[level - d].Count() <= 2 * (Math.Sqrt(N) - d))
                     m = level - d;
 
-                if (!M.HasValue && BFSLevels[level + d].Count() < 2 * (Math.Sqrt(N) - d))
+                if (!M.HasValue && BFSLevels[level + d].Count() <= 2 * (Math.Sqrt(N) - d))
                     M = level + d;
                 d++;
             }
