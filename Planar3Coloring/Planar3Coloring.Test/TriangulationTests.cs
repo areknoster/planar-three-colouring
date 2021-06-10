@@ -15,7 +15,7 @@ namespace Planar3Coloring.Test
         {
             UndirectedGraph<int, IEdge<int>> graph = new UndirectedGraph<int, IEdge<int>>(false);
 
-            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph);
+            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph).nonTreeEdges;
 
             Assert.True(g.IsVerticesEmpty);
         }
@@ -49,16 +49,16 @@ namespace Planar3Coloring.Test
                 edges.Add(new Edge<int>(root, i));
             graph.AddVerticesAndEdgeRange(edges);
 
-            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph, root);
+            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph, root).nonTreeEdges;
 
             foreach (IEdge<int> edge in edges)
-                Assert.True(g.ContainsEdge(edge));
+                Assert.False(g.ContainsEdge(edge));
             for (int i = 2; i <= N; i++)
                 Assert.True(g.ContainsEdge(i - 1, i));
             if (N > 1)
             {
                 Assert.True(g.ContainsEdge(N, 1));
-                Assert.Equal(3 * N - 3, g.EdgeCount);
+                Assert.Equal(2 * N - 3, g.EdgeCount);
             }
         }
 
@@ -75,10 +75,10 @@ namespace Planar3Coloring.Test
                 edges.Add(new Edge<int>(i, i + 1));
             graph.AddVerticesAndEdgeRange(edges);
 
-            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph, root);
+            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph, root).nonTreeEdges;
 
             foreach (IEdge<int> edge in edges)
-                Assert.True(g.ContainsEdge(edge));
+                Assert.False(g.ContainsEdge(edge));
             for (int i = 2; i <= N; i++)
                 Assert.True(g.ContainsEdge(root, i));
             for (int i = 3; i < N; i++)
@@ -99,10 +99,10 @@ namespace Planar3Coloring.Test
             edges.Add(new Edge<int>(2, 6));
             graph.AddVerticesAndEdgeRange(edges);
 
-            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph, root);
+            UndirectedGraph<int, IEdge<int>> g = sut.Triangulate(graph, root).nonTreeEdges;
 
             foreach (IEdge<int> edge in edges)
-                Assert.True(g.ContainsEdge(edge));
+                Assert.False(g.ContainsEdge(edge));
             Assert.True(g.ContainsEdge(1, 2));
             Assert.True(g.ContainsEdge(0, 3));
             Assert.True(g.ContainsEdge(3, 4));

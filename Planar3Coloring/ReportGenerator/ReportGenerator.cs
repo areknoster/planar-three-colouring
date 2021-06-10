@@ -97,8 +97,8 @@ namespace ReportGenerator
                     var check = new Check();
                     var sw = new Stopwatch();
 
-                    try
-                    {
+                    //try
+                    //{
                         sw.Start();
                         var coloring = alg.Find3Colorings(example.Graph);
                         sw.Stop();
@@ -115,11 +115,11 @@ namespace ReportGenerator
                         {
                             check.result = Result.Uncolorable;
                         }
-                    }
-                    catch
-                    {
-                        check.result = Result.Error;
-                    }
+                    //}
+                    //catch
+                    //{
+                    //    check.result = Result.Error;
+                    //}
 
 
                     check.elapsed = sw.Elapsed;
