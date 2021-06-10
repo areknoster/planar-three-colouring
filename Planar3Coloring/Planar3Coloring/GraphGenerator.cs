@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using QuikGraph;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Planar3Coloring
 {
@@ -28,8 +31,6 @@ namespace Planar3Coloring
         {
             var rand = new Random(seed);
             var g = new RandomPlanar(denisty, rand);
-            vertices = vertices < 3 ? 3 : vertices;
-
             while (g.Count < vertices)
             {
                 g.AddVertex();
@@ -37,71 +38,107 @@ namespace Planar3Coloring
 
             return g.Graph;
         }
+
+        public class Face
+        {
+            public Face(Random random, List<int> vertices)
+            {
+                _random = random;
+                Vertices = vertices;
+            }
+
+            private Random _random; 
+            public List<int> Vertices { get; }
+            public HashSet<int> ChooseConnections(double density)
+            {
+                var connections = new HashSet<int>();
+                foreach (var vertex in Vertices.Where(vertex => _random.NextDouble() < density))
+                {
+                    connections.Add(vertex);
+                }
+                return connections;
+            }
+
+            public List<Face> DivideByConnections(int newVertex, HashSet<int> connections)
+            {
+                var faces = new List<Face>(connections.Count);
+                int first = Vertices.FindIndex(v => connections.Contains(v));
+                int index = 0;
+                // the ranges for first n-1 faces are set by connections, the last consists of the rest
+                for (int j = 0; j < connections.Count; j++)
+                {
+                    var faceVertices = new List<int>(){newVertex};
+                    if (j < connections.Count - 1) // normal casae
+                    {
+                        faceVertices.Add(Vertices[(first + index) % Vertices.Count]);
+                        int v = -1;
+                        while (!connections.Contains(v))
+                        {
+                            index++;
+                            v = Vertices[(first + index) % Vertices.Count];
+                            faceVertices.Add(v);
+                            
+                        }
+                    }
+                    else // last part
+                    {
+                        while (index <= Vertices.Count)
+                        {
+                            faceVertices.Add(Vertices[(first + index) % Vertices.Count ]);
+                            index++;
+                        }
+                        
+                    }
+
+                    faces.Add(new Face(_random, faceVertices));
+                }
+
+
+                return faces;
+            }
+        }
         
         private class RandomPlanar
         {
-            private List<List<int>> _faces;
+            private List<Face> _faces;
             public UndirectedGraph<int, IEdge<int>> Graph { get; }
             private readonly double _density;
             private Random random;
             public int Count => Graph.VertexCount;
             public RandomPlanar(double density, Random random)
             {
-                this._density = Math.Clamp(density, 0, 1);
+                _density = Math.Clamp(density, 0, 1);
                 this.random = random;
-                this.Graph = GraphGenerator.Clique(3);
-                _faces = new List<List<int>>
+                Graph = new UndirectedGraph<int, IEdge<int>>();
+                Graph.AddVerticesAndEdge(new Edge<int>(0, 1));
+                _faces = new List<Face>()
                 {
-                    new List<int>(this.Graph.Vertices), // internal
-                    new List<int>(this.Graph.Vertices), // external
+                    new Face(random, new List<int>{0,1})
                 };
-            }
 
+            }
+            
             public void AddVertex()
             {
-                int newVertex = Graph.VertexCount;
-                Graph.AddVertex(newVertex);
                 //choose face randomly
                 var faceIndex = random.Next(_faces.Count);
                 var face = _faces[faceIndex];
-                var connections = new List<int> (ChooseConnectionsFromFace(face));
-                var ranges = new List<(int, int)>();
-                for (int i = 0; i < connections.Count; i++)
-                {
-                    var r = (connections[i], connections[(i + 1) % connections.Count]);
-                    ranges.Add(r);
-                    Graph.AddEdge(new Edge<int>(r.Item1, newVertex));
-                }
-                var newFaces = ranges.Select((r) =>
-                {
-                    var newFace = new List<int>();
-                    for (int i = r.Item1; i != r.Item2; i = (i + 1) % face.Count)
-                        newFace.Add(face[i]);
-                    newFace.Add(face[r.Item2]);
-                    newFace.Add(newVertex);
-                    return newFace;
-                });
+                
+                var connections = face.ChooseConnections(_density);
+                if (connections.Count == 0) //skipping if no connection was found, because the graph must stay connected.
+                    return;
+
+                int newVertex = Graph.VertexCount;
+                // update graph with new vertex
+                Graph.AddVertex(newVertex);
+                Graph.AddEdgeRange(connections.Select((vSource) => new Edge<int>(vSource, newVertex)));
+                
+                //update state of the rest of the instance
+                var newFaces = face.DivideByConnections(newVertex, connections);
                 _faces.RemoveAt(faceIndex);
                 _faces.AddRange(newFaces);
             }
-            
-            // chooses at least two random connections from new vertices based on density
-            private SortedSet<int> ChooseConnectionsFromFace(List<int> face)
-            {
-                var connections = new SortedSet<int>();
-                for (int i = 0; i < face.Count; i++)
-                {
-                    if (random.NextDouble() <= _density)
-                    {
-                        connections.Add(i);
-                    }
-                }
-                while (connections.Count < 2)
-                {
-                    connections.Add(random.Next(face.Count));
-                }
-                return connections;
-            }
+
         }
         
     }
