@@ -26,6 +26,7 @@ namespace Planar3Coloring.Triangulation
                 throw new ArgumentException("root");
 
             UndirectedGraph<int, IEdge<int>> G = tree.Clone();
+            UndirectedGraph<int, IEdge<int>> res = new UndirectedGraph<int, IEdge<int>>();
 
             // create counter-clockwise combinatorial embedding
             // assumes vertices are numbered as in BFS
@@ -47,14 +48,14 @@ namespace Planar3Coloring.Triangulation
                 for (int i = 1; i < neighbors.Length; i++)
                 {
                     int curr = neighbors[i];
-                    TryAddEdge(prev, curr, v, ref G, ref embedding);
+                    TryAddEdge(prev, curr, v, ref G, ref res, ref embedding);
                     prev = curr;
                 }
                 if (neighbors.Length > 2)
-                    TryAddEdge(prev, neighbors[0], v, ref G, ref embedding);
+                    TryAddEdge(prev, neighbors[0], v, ref G, ref res, ref embedding);
             }
 
-            return G;
+            return res;
         }
 
         /// <summary>
@@ -65,12 +66,13 @@ namespace Planar3Coloring.Triangulation
         /// <param name="parent">Common neighbor of <paramref name="v1"/> and <paramref name="v2"/>.</param>
         /// <param name="graph">Graph under triangulation.</param>
         /// <param name="embedding">Combinatorial embedding of <paramref name="graph"/></param>
-        private void TryAddEdge(int v1, int v2, int parent, ref UndirectedGraph<int, IEdge<int>> graph, ref List<int>[] embedding)
+        private void TryAddEdge(int v1, int v2, int parent, ref UndirectedGraph<int, IEdge<int>> graph, ref UndirectedGraph<int, IEdge<int>> graph2, ref List<int>[] embedding)
         {
             if (graph.ContainsEdge(v1, v2))
                 return;
 
             graph.AddEdge(new Edge<int>(v1, v2));
+            graph2.AddVerticesAndEdge(new Edge<int>(v1, v2));
             int idx1 = embedding[v1].FindIndex(v => v == parent);
             int idx2 = embedding[v2].FindIndex(v => v == parent);
             embedding[v1].Insert(idx1, v2);

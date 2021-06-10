@@ -22,7 +22,7 @@ namespace Planar3Coloring
 
             //Find mi level
             int nodesNumber = 0;
-            int level = 0;
+            int level = -1;
             while (nodesNumber < N / 2)
                 nodesNumber += BFSLevels[++level].Count;
 
@@ -30,18 +30,18 @@ namespace Planar3Coloring
             HashSet<int> S = BFSLevels[level];
 
             //Check constraints
-            if (S.Count < (int)(Math.Sqrt(N) * SeparatorConditions.B))
+            if (S.Count <= (Math.Sqrt(N) * SeparatorConditions.B))
                 return S;
 
             //Phase 2
             int? m = null, M = null;
             int d = 0;
-            while (level - d >= 0 && level + d < BFSLevels.Count() && (!m.HasValue || !M.HasValue))
+            while ((level - d >= 0 || level + d < BFSLevels.Count()) && (!m.HasValue || !M.HasValue))
             {
-                if (!m.HasValue && BFSLevels[level - d].Count() < 2 * (Math.Sqrt(N) - d))
+                if (!m.HasValue && (level - d >= 0) && BFSLevels[level - d].Count() <= 2 * (Math.Sqrt(N) - d))
                     m = level - d;
 
-                if (!M.HasValue && BFSLevels[level + d].Count() < 2 * (Math.Sqrt(N) - d))
+                if (!M.HasValue && (level + d < BFSLevels.Count()) && BFSLevels[level + d].Count() <= 2 * (Math.Sqrt(N) - d))
                     M = level + d;
                 d++;
             }
@@ -152,8 +152,8 @@ namespace Planar3Coloring
                     fundamentalCycleVertices.Add(v2);
 
                     //Edges in BFSTree are down to top
-                    v1 = BFSTree.AdjacentEdges(v1).First(e => e.Source == v1).Target;
-                    v2 = BFSTree.AdjacentEdges(v2).First(e => e.Source == v2).Target;
+                    v1 = BFSTree.AdjacentEdges(v1).First().GetOtherVertex(v1);
+                    v2 = BFSTree.AdjacentEdges(v2).First().GetOtherVertex(v2);
                 }
                 fundamentalCycleVertices.Add(v1);
 
