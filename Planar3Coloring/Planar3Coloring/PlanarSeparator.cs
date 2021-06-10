@@ -83,7 +83,7 @@ namespace Planar3Coloring
 
             //Triangulate
             var triangulization = new InternalTriangulation();
-            UndirectedGraph<int, IEdge<int>> T = triangulization.Triangulate(BFSTree, root).nonTreeEdges;
+            (UndirectedGraph<int, IEdge<int>> T, Dictionary<(int source, int target), int> innerVertices) = triangulization.Triangulate(BFSTree);
 
             HashSet<int> fundamentalCycleVertices = new HashSet<int>();
             int innerVerticesCount = 0;
@@ -97,56 +97,42 @@ namespace Planar3Coloring
 
             while (triangEdges.MoveNext() && outerVerticesCount > 2 * N / 3 || innerVerticesCount > 2 * N / 3)
             {
+                if (!triangEdges.MoveNext())
+                    throw new Exception("End of triangEdges");
                 IEdge<int> edge = triangEdges.Current;
 
                 fundamentalCycleVertices = new HashSet<int>();
                 int v1 = edge.Source;
                 int v2 = edge.Target;
 
-                (int level, int number) v1Pos = BFSDict[v1];
-                (int level, int number) v2Pos = BFSDict[v2];
-
                 fundamentalCycleVertices.Add(v1);
                 fundamentalCycleVertices.Add(v2);
-                bool flag = false;
-                while (v1Pos.level > v2Pos.level)
+
+                while (BFSDict[v1].level > BFSDict[v2].level)
                 {
-                    flag = true;
                     v1 = GetParentVertex(v1, BFSTree, BFSDict);
-                    v1Pos = BFSDict[v1];
                     fundamentalCycleVertices.Add(v1);
                 }
-                if (flag)
-                    fundamentalCycleVertices.Remove(v1);
 
-                flag = false;
-                while (v2Pos.level > v1Pos.level)
+                while (BFSDict[v2].level > BFSDict[v1].level)
                 {
-                    flag = true;
                     v2 = GetParentVertex(v2, BFSTree, BFSDict);
-                    v2Pos = BFSDict[v2];
                     fundamentalCycleVertices.Add(v2);
                 }
-                if (flag)
-                    fundamentalCycleVertices.Remove(v2);
 
-                innerVerticesCount = 0;
                 while (v1 != v2)
                 {
-                    innerVerticesCount += Math.Abs(v1Pos.number - v2Pos.number) - 1;
-
                     fundamentalCycleVertices.Add(v1);
                     fundamentalCycleVertices.Add(v2);
                     v1 = GetParentVertex(v1, BFSTree, BFSDict);
                     v2 = GetParentVertex(v2, BFSTree, BFSDict);
-
-                    v1Pos = BFSDict[v1];
-                    v2Pos = BFSDict[v2];
                 }
                 fundamentalCycleVertices.Add(v1);
 
+                innerVerticesCount = innerVertices.ContainsKey((edge.Source, edge.Target)) ?
+                                        innerVertices[(edge.Source, edge.Target)] :
+                                        innerVertices[(edge.Target, edge.Source)];
                 outerVerticesCount = BFSTree.VertexCount - fundamentalCycleVertices.Count - innerVerticesCount;
-                triangEdges.MoveNext();
             }
 
             //Add vertices from fundamental cycle to separator
