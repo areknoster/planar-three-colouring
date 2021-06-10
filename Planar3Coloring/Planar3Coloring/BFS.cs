@@ -15,7 +15,7 @@ namespace Planar3Coloring
             List<HashSet<int>> levels = new List<HashSet<int>>();
             Dictionary<int, (int, int)> dict = new Dictionary<int, (int, int)>();
 
-            bool[] enqueued = new bool[graph.VertexCount];
+            HashSet<int> enqueued = new HashSet<int>();
             int level = 0;
             int intNumberOnLevel = 0;
             levels.Add(new HashSet<int>());
@@ -24,7 +24,7 @@ namespace Planar3Coloring
             int nextLevelMark = -1;
             
             queue.Enqueue(root);
-            enqueued[root] = true;
+            enqueued.Add(root);
             queue.Enqueue(nextLevelMark);
 
             while (queue.Count>0)
@@ -49,10 +49,10 @@ namespace Planar3Coloring
 
                 //Add all v neighbours to queue
                 foreach (IEdge<int> e in graph.AdjacentEdges(v))
-                    if (!enqueued[e.Target])
+                    if (!enqueued.Contains(e.Target))
                     {
                         queue.Enqueue(e.Target);
-                        enqueued[e.Target] = true;
+                        enqueued.Add(e.Target);
                         BFSTree.AddVerticesAndEdge(new Edge<int>(e.Source, e.Target));
                     }
             }
