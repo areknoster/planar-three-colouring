@@ -14,4 +14,8 @@
       <ProjectReference Include="..\Planar3Coloring\Planar3Coloring.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Data\" />
+    </ItemGroup>
+
 </Project>
