@@ -122,7 +122,7 @@ namespace Planar3Coloring
                         if (v3Pos.level + 1 == v1Pos.level)
                         {
                             fundamentalCycleVertices.Add(v3);
-                            v2 = BFSTree.AdjacentEdges(v2).First(e => e.Source == v1).Target;
+                            v2 = BFSTree.AdjacentEdges(v1).First().GetOtherVertex(v1);
                             break;
                         }
                     }
@@ -134,7 +134,7 @@ namespace Planar3Coloring
                         if (v3Pos.level - 1 == v2Pos.level)
                         {
                             fundamentalCycleVertices.Add(v3);
-                            v2 = BFSTree.AdjacentEdges(v1).First(e => e.Source == v1).Target;
+                            v2 = BFSTree.AdjacentEdges(v1).First().GetOtherVertex(v1);
                             break;
                         }
                     }
