@@ -75,9 +75,10 @@ namespace Planar3Coloring
                 var newFaces = ranges.Select((r) =>
                 {
                     var newFace = new List<int>();
-                    for (int i = r.Item1; i != r.Item2; i = (i + 1) % newFace.Count)
+                    for (int i = r.Item1; i != r.Item2; i = (i + 1) % face.Count)
                         newFace.Add(face[i]);
                     newFace.Add(face[r.Item2]);
+                    newFace.Add(newVertex);
                     return newFace;
                 });
                 _faces.RemoveAt(faceIndex);
