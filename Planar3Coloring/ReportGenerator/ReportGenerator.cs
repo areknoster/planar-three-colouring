@@ -40,17 +40,16 @@ namespace ReportGenerator
 
     public class ReportGenerator
     {
-        private List<Example> examples;
         private List<IColoringFinder> algorithms;
 
-        public ReportGenerator(List<Example> examples)
+        public ReportGenerator()
         {
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
                 new DnCColoring(),
             };
-            this.examples = examples;
+
         }
 
         private enum Result
@@ -66,7 +65,7 @@ namespace ReportGenerator
             public Result result;
         }
 
-        private void WriteCSV(List<(string, List<Check>)> data)
+        private void WriteCsv(List<(string, List<Check>)> data)
         {
             using (var w = new StreamWriter("results.csv"))
             {
@@ -85,7 +84,7 @@ namespace ReportGenerator
             }
         }
 
-        public void RunAlgorithms()
+        public void RunAlgorithms(List<Example> examples)
         {
             var data = new List<(string, List<Check>)>(examples.Count);
             foreach (var example in examples)
@@ -128,7 +127,7 @@ namespace ReportGenerator
                 }
             }
 
-            WriteCSV(data);
+            WriteCsv(data);
         }
     }
 }
