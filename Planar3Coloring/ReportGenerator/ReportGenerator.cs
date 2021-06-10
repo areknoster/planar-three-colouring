@@ -40,23 +40,23 @@ namespace ReportGenerator
 
     public class ReportGenerator
     {
-        private List<Example> examples;
         private List<IColoringFinder> algorithms;
 
-        public ReportGenerator(List<Example> examples)
+        public ReportGenerator()
         {
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
                 new DnCColoring(),
             };
-            this.examples = examples;
+
         }
 
         private enum Result
         {
             Colorable,
-            Uncolorable
+            Uncolorable,
+            Error,
         }
 
         private struct Check
@@ -65,55 +65,69 @@ namespace ReportGenerator
             public Result result;
         }
 
-        private void WriteCSV(List<List<Check>> data)
+        private void WriteCsv(List<(string, List<Check>)> data)
         {
             using (var w = new StreamWriter("results.csv"))
             {
-                foreach (var checks in data)
+                foreach (var row in data)
                 {
                     var elements = new List<string>();
-                    foreach (var check in checks)
+                    elements.Add(row.Item1);
+                    foreach (var check in row.Item2)
                     {
                         elements.Add(check.elapsed.ToString());
                         elements.Add(check.result.ToString());
                     }
+
                     w.WriteLine(Strings.Join(elements.ToArray(), ","));
                 }
             }
         }
-        public void RunAlgorithms()
+
+        public void RunAlgorithms(List<Example> examples)
         {
-            var data = new List<List<Check>>(examples.Count);
+            var data = new List<(string, List<Check>)>(examples.Count);
             foreach (var example in examples)
             {
-                data.Add(new List<Check>(algorithms.Count));
-                
+                data.Add((example.Name, new List<Check>(algorithms.Count)));
+
                 Console.WriteLine(example.Name);
                 foreach (var alg in algorithms)
                 {
                     var check = new Check();
                     var sw = new Stopwatch();
-                    sw.Start();
-                    var coloring = alg.Find3Colorings(example.Graph);
-                    sw.Stop();
-                    if (coloring != null)
+
+                    try
                     {
-                        if (!ColoringChecker.CheckColoring(example.Graph, coloring))
+                        sw.Start();
+                        var coloring = alg.Find3Colorings(example.Graph);
+                        sw.Stop();
+                        if (coloring != null)
                         {
-                            throw new Exception("Wrong coloring output!");
+                            if (!ColoringChecker.CheckColoring(example.Graph, coloring))
+                            {
+                                throw new Exception("Wrong coloring output!");
+                            }
+
+                            check.result = Result.Colorable;
                         }
-                        check.result = Result.Colorable;
+                        else
+                        {
+                            check.result = Result.Uncolorable;
+                        }
                     }
-                    else
+                    catch
                     {
-                        check.result = Result.Uncolorable;
+                        check.result = Result.Error;
                     }
 
+
                     check.elapsed = sw.Elapsed;
-                    data.Last().Add(check);
+                    data.Last().Item2.Add(check);
                 }
             }
-            WriteCSV(data);
+
+            WriteCsv(data);
         }
     }
 }

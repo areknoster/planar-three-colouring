@@ -83,7 +83,7 @@ namespace Planar3Coloring
                     if (BruteForceColoring(components, s))
                         return true;
                 }
-                else//SeparatorColored
+                else //SeparatorColored
                 {
                     foreach(UndirectedGraph<int, IEdge<int>> component in components)
                     {

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace ReportGenerator
 {
@@ -6,9 +9,24 @@ namespace ReportGenerator
     {
         static void Main(string[] args)
         {
-            var examples = RandomExamplesGenerator.GenerateRandomExamples(50, 1, 0.15);
-            var generator = new ReportGenerator(examples);
-            generator.RunAlgorithms();
+            string projDir = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+            string folderName = "Data";
+            var examples = new List<Example>();
+            for (int i = 1; i <= 9; i++)
+            {
+                string filename = $"planar_conn.{i}.txt";
+                string filepath = Path.Combine(projDir, folderName, filename);
+                var downloadedGraphs = GraphConverter.Convert(filepath);
+                var downloadedExamples = downloadedGraphs.Select((g) => new Example()
+                {
+                    Graph = g,
+                    Name = $"downloaded with {g.VertexCount} vertices and {g.EdgeCount} edges",
+                });
+                examples.AddRange(downloadedExamples);
+            }
+            examples.AddRange( RandomExamplesGenerator.GenerateRandomExamples(45, 5, 0.15));
+            var generator = new ReportGenerator();
+            generator.RunAlgorithms(examples);
         }
     }
 }
