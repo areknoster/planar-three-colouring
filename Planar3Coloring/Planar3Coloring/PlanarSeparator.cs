@@ -68,10 +68,10 @@ namespace Planar3Coloring
 
             //Phase 3
             //Reduce 0 to m levels
+            int root = BFSLevels[0].First();
             for (int i = 0; i <= m; i++)
                 foreach (int v in BFSLevels[i])
                     BFSTree.RemoveVertex(v);
-            int root = new int();
             BFSTree.AddVertex(root);
             foreach (int v in BFSLevels[m.Value + 1])
                 BFSTree.AddEdge(new Edge<int>(root, v));
@@ -83,19 +83,19 @@ namespace Planar3Coloring
 
             //Triangulate
             var triangulization = new InternalTriangulation();
-            UndirectedGraph<int, IEdge<int>> T = triangulization.Triangulate(BFSTree).nonTreeEdges;
+            UndirectedGraph<int, IEdge<int>> T = triangulization.Triangulate(BFSTree, root).nonTreeEdges;
 
             HashSet<int> fundamentalCycleVertices = new HashSet<int>();
             int innerVerticesCount = 0;
             int outerVerticesCount = BFSTree.VertexCount;
 
             IEnumerator<IEdge<int>> triangEdges = T.Edges.GetEnumerator();
-            if (!triangEdges.MoveNext())
-            {
-                // what here?
-            }
+            //if (!triangEdges.MoveNext())
+            //{
+            //    // what here?
+            //}
 
-            while (outerVerticesCount > 2 * N / 3 || innerVerticesCount > 2 * N / 3)
+            while (triangEdges.MoveNext() && outerVerticesCount > 2 * N / 3 || innerVerticesCount > 2 * N / 3)
             {
                 IEdge<int> edge = triangEdges.Current;
 
