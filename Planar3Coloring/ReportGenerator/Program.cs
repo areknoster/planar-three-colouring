@@ -6,7 +6,7 @@ namespace ReportGenerator
     {
         static void Main(string[] args)
         {
-            var examples = RandomExamplesGenerator.GenerateRandomExamples(50, 10, 0.15);
+            var examples = RandomExamplesGenerator.GenerateRandomExamples(50, 1, 0.15);
             var generator = new ReportGenerator(examples);
             generator.RunAlgorithms();
         }
