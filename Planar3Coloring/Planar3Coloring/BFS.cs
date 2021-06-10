@@ -56,8 +56,7 @@ namespace Planar3Coloring
                         BFSTree.AddVerticesAndEdge(new Edge<int>(e.Source, e.Target));
                     }
             }
-            // empty level
-            levels.Add(new HashSet<int>());
+
             return (levels, BFSTree, dict);
         }
     }

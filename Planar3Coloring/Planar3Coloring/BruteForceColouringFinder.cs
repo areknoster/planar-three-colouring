@@ -40,7 +40,7 @@ namespace Planar3Coloring
 
             private bool TryColors(int vertex)
             {
-                if (vertex % 5 == 0 && sw.Elapsed.Seconds >= 30)
+                if (vertex % 5 == 0 && sw.Elapsed.Seconds >= 10)
                 {
                     throw new TimeoutException();
                 }

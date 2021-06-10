@@ -15,6 +15,11 @@ namespace Planar3Coloring
         private GraphColor?[] _coloring;
         public GraphColor[] Find3Colorings(UndirectedGraph<int, IEdge<int>> graph)
         {
+            //Tests
+            //foreach (IEdge<int> edge in graph.Edges)
+            //    Console.WriteLine(edge);
+
+
             //Initialize structures
             _graph = graph.Clone();
             _availableColors = new HashSet<GraphColor>[_graph.VertexCount];
@@ -44,7 +49,8 @@ namespace Planar3Coloring
 
         private bool BruteForceColoring(List<UndirectedGraph<int, IEdge<int>>> components, HashSet<int> s)
         {
-            //Pick first vertex from separator
+            if (s.Count == 0)
+                throw new Exception("Empty separator");
             int v = s.First();
             s.Remove(v);
 
@@ -136,9 +142,9 @@ namespace Planar3Coloring
                 UndirectedGraph<int, IEdge<int>> component = new UndirectedGraph<int, IEdge<int>>(false);
                 Queue<int> queue = new Queue<int>();
                 int v = vertices.First();
-                component.AddVertex(v);
-                queue.Enqueue(v);
                 vertices.Remove(v);
+                queue.Enqueue(v);
+                component.AddVertex(v);
                 while(queue.Count>0)
                 {
                     v = queue.Dequeue();

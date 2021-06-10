@@ -24,7 +24,7 @@ namespace ReportGenerator
             //    });
             //    examples.AddRange(downloadedExamples);
             //}
-            examples.AddRange(RandomExamplesGenerator.GenerateRandomExamples(45, 5, 0.15));
+            examples.AddRange(RandomExamplesGenerator.GenerateRandomExamples(57, 5, 0.15));
             var generator = new ReportGenerator();
             generator.RunAlgorithms(examples);
         }
