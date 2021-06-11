@@ -9,9 +9,6 @@ namespace Planar3Coloring.Triangulation
         /// <summary>
         /// Triangulates a tree, visiting its vertices in order as they are stored internally.
         /// </summary>
-        /// <remarks>
-        /// Vertices must be from range [0, tree.VertexCount).
-        /// </remarks>
         /// <param name="tree">Tree to triangulate. Needs to be connected
         /// or this method triangulates only the component containing <paramref name="root"/>.
         /// Algorithm assumes vertices are numbered as in BFS. If they are not, use another implementation.
