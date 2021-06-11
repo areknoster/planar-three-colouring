@@ -19,6 +19,14 @@ namespace Planar3Coloring
             //BFSTree - just BFS tree with edges going down to top
             //BFSDict - Key - int; Value - level and number on level
 
+            //for (int i = 0; i < BFSLevels.Count; i++)
+            //{
+            //    Console.WriteLine($"Level: {i}");
+            //    foreach (int v in BFSLevels[i])
+            //        Console.WriteLine(v);
+            //}
+
+
             //Find mi level
             int nodesNumber = 0;
             int level = -1;
@@ -73,6 +81,7 @@ namespace Planar3Coloring
             {
                 m = 0;
                 M = BFSLevels.Count;
+                S = new HashSet<int>();
             }
 
             //Phase 3
