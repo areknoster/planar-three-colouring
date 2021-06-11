@@ -49,14 +49,14 @@ namespace Planar3Coloring
 
                 //Add all v neighbours to queue
                 foreach (IEdge<int> e in graph.AdjacentEdges(v))
-                    if (!enqueued.Contains(e.Target))
+                    if (!enqueued.Contains(e.GetOtherVertex(v)))
                     {
-                        queue.Enqueue(e.Target);
-                        enqueued.Add(e.Target);
-                        BFSTree.AddVerticesAndEdge(new Edge<int>(e.Source, e.Target));
+                        queue.Enqueue(e.GetOtherVertex(v));
+                        enqueued.Add(e.GetOtherVertex(v));
+                        BFSTree.AddVerticesAndEdge(new Edge<int>(v, e.GetOtherVertex(v)));
                     }
             }
-
+            levels.Add(new HashSet<int>());
             return (levels, BFSTree, dict);
         }
     }

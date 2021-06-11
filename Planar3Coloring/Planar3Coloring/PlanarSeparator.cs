@@ -19,21 +19,11 @@ namespace Planar3Coloring
             //BFSTree - just BFS tree with edges going down to top
             //BFSDict - Key - int; Value - level and number on level
 
-            //for (int i = 0; i < BFSLevels.Count; i++)
-            //{
-            //    Console.WriteLine($"Level: {i}");
-            //    foreach (int v in BFSLevels[i])
-            //        Console.WriteLine(v);
-            //}
-
-
             //Find mi level
             int nodesNumber = 0;
             int level = -1;
             while (nodesNumber < N / 2)
-            {
                 nodesNumber += BFSLevels[++level].Count;
-            }
 
             //Assign vertices from mi level to separator
             HashSet<int> S = BFSLevels[level];
@@ -54,35 +44,27 @@ namespace Planar3Coloring
                     M = level + d;
                 d++;
             }
-            if (m.HasValue && M.HasValue)
-            {
-                S = BFSLevels[m.Value];
-                foreach (int v in BFSLevels[M.Value])
-                    S.Add(v);
 
-                //Check constraints
-                int topCount = 0;
-                for (int i = 0; i < m.Value; i++)
-                    topCount += BFSLevels[i].Count();
-                int midCount = 0;
-                for (int i = m.Value + 1; i < M.Value; i++)
-                    midCount += BFSLevels[i].Count();
-                int botCount = 0;
-                for (int i = M.Value + 1; i < BFSLevels.Count; i++)
-                    botCount += BFSLevels[i].Count();
+            S = BFSLevels[m.Value];
+            foreach (int v in BFSLevels[M.Value])
+                S.Add(v);
 
-                int BCount = Math.Max(Math.Max(topCount, midCount), botCount);
-                int ACount = topCount + midCount + botCount - BCount;
+            //Check constraints
+            int topCount = 0;
+            for (int i = 0; i < m.Value; i++)
+                topCount += BFSLevels[i].Count();
+            int midCount = 0;
+            for (int i = m.Value + 1; i < M.Value; i++)
+                midCount += BFSLevels[i].Count();
+            int botCount = 0;
+            for (int i = M.Value + 1; i < BFSLevels.Count; i++)
+                botCount += BFSLevels[i].Count();
 
-                if (ACount / (double)BCount < SeparatorConditions.Balance)
-                    return S;
-            }
-            else
-            {
-                m = 0;
-                M = BFSLevels.Count;
-                S = new HashSet<int>();
-            }
+            int BCount = Math.Max(Math.Max(topCount, midCount), botCount);
+            int ACount = topCount + midCount + botCount - BCount;
+
+            if (ACount / (double)BCount < SeparatorConditions.Balance)
+                return S;
 
             //Phase 3
             //Reduce 0 to m levels
@@ -90,6 +72,8 @@ namespace Planar3Coloring
             for (int i = 0; i <= m; i++)
                 foreach (int v in BFSLevels[i])
                     BFSTree.RemoveVertex(v);
+            BFSDict[root] = (m.Value, 0);
+
             BFSTree.AddVertex(root);
             foreach (int v in BFSLevels[m.Value + 1])
                 BFSTree.AddEdge(new Edge<int>(root, v));
@@ -98,6 +82,7 @@ namespace Planar3Coloring
             for (int i = M.Value; i < BFSLevels.Count(); i++)
                 foreach (int v in BFSLevels[i])
                     BFSTree.RemoveVertex(v);
+
             //Triangulate
             var triangulization = new InternalTriangulation();
             (UndirectedGraph<int, IEdge<int>> T, Dictionary<(int source, int target), int> innerVertices) = triangulization.Triangulate(BFSTree);
@@ -110,8 +95,6 @@ namespace Planar3Coloring
 
             while (triangEdges.MoveNext() && outerVerticesCount > 2 * N / 3 || innerVerticesCount > 2 * N / 3)
             {
-                if (!triangEdges.MoveNext())
-                    throw new Exception("End of triangEdges");
                 IEdge<int> edge = triangEdges.Current;
 
                 fundamentalCycleVertices = new HashSet<int>();

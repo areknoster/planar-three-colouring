@@ -8,8 +8,7 @@ namespace Planar3Coloring
 {
     static class SeparatorConditions
     {
-        public static int SeparatorSize { get; }
-        public static double B { get; } = 4.0;
-        public static double Balance { get; }
+        public static double B { get; } = Math.Sqrt(8.0);
+        public static double Balance { get; } = 2.0 / 3.0;
     }
 }

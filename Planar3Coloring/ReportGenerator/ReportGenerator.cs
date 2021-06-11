@@ -47,7 +47,7 @@ namespace ReportGenerator
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
-                new DnCColoring(),
+                new DnCColoringFinder(),
             };
 
         }
@@ -88,7 +88,6 @@ namespace ReportGenerator
         {
             var data = new List<(string, List<Check>)>(examples.Count);
             foreach (var example in examples)
-                if (example.Graph.VertexCount == 90)
                 {
                     data.Add((example.Name, new List<Check>(algorithms.Count)));
 
@@ -103,7 +102,6 @@ namespace ReportGenerator
                         sw.Start();
                         var coloring = alg.Find3Colorings(example.Graph);
                         sw.Stop();
-                        Console.WriteLine($"{alg.Name}: {check.elapsed}");
                         if (coloring != null)
                         {
                             if (!ColoringChecker.CheckColoring(example.Graph, coloring))
@@ -127,6 +125,7 @@ namespace ReportGenerator
 
 
                         check.elapsed = sw.Elapsed;
+                        Console.WriteLine($"{alg.Name}: {check.elapsed.TotalMilliseconds}");
                         data.Last().Item2.Add(check);
                     }
                 }

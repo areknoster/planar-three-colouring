@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Planar3Coloring
 {
-    public class DnCColoring : IColoringFinder
+    public class DnCColoringFinder : IColoringFinder
     {
         private UndirectedGraph<int, IEdge<int>> _graph;
         private HashSet<GraphColor>[] _availableColors;
@@ -28,38 +28,68 @@ namespace Planar3Coloring
             {
                 //Find separator S for component
                 HashSet<int> S = PlanarSeparator.FindSeparator(component);
-
-                //Split component into smaller components
+                ////Split component into smaller components
                 foreach (int v in S)
                     component.RemoveVertex(v);
                 List<UndirectedGraph<int, IEdge<int>>> components = FindComponents(component);
 
                 //One of components cannot be colored => whole G cannot be colored
-                if (!BruteForceColoring(new List<UndirectedGraph<int, IEdge<int>>>(), component.Vertices.ToHashSet()))
+                //Slow version
+                if (!DnCColoring(components, S))
                     return null;
+                //Fast version
+                //if (!BruteForceColoring(new List<UndirectedGraph<int, IEdge<int>>>(), _graph.Vertices.ToHashSet()))
+                //    return null;
             }
             return _coloring.Select(c => c.Value).ToArray();
         }
 
         public string Name => "DnCColoring";
 
-        private bool BruteForceColoring(List<UndirectedGraph<int, IEdge<int>>> components, HashSet<int> s)
+        private bool DnCColoring(List<UndirectedGraph<int, IEdge<int>>> components, HashSet<int> s)
         {
+            //Separator colored
             if (s.Count == 0)
-                throw new Exception("Empty separator");
+            {
+                foreach (UndirectedGraph<int, IEdge<int>> component in components)
+                    if (component.VertexCount < 15)
+                    {
+                        //Can't find separator for component - color using bruteforce
+                        if (!DnCColoring(new List<UndirectedGraph<int, IEdge<int>>>(),
+                                                new HashSet<int>(component.Vertices)))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        HashSet<int> sPrim = PlanarSeparator.FindSeparator(component);
+                        UndirectedGraph<int, IEdge<int>> componentCopy = component.Clone();
+                        foreach (int vPrim in sPrim)
+                            componentCopy.RemoveVertex(vPrim);
+                        List<UndirectedGraph<int, IEdge<int>>> componentsPrim = FindComponents(componentCopy);
+                        if (!DnCColoring(componentsPrim, sPrim))
+                        {
+                            return false;
+                        }
+                    }
+                return true;
+            }
+
+            //Separator still not colored
             int v = s.First();
             s.Remove(v);
             foreach (GraphColor color in (GraphColor[])Enum.GetValues(typeof(GraphColor)))
             {
                 if (!_availableColors[v].Contains(color))
                     continue;
+
                 //Color v with color
                 _coloring[v] = color;
                 bool moveToNextColor = false;
                 List<int> verticesWithTakenColor = new List<int>();
 
-                foreach(int n in _graph.AdjacentVertices(v))
-                {
+                foreach (int n in _graph.AdjacentVertices(v))
                     if (_availableColors[n].Contains(color))
                     {
                         //Adjacent not colored vertex has no available color - invalid coloring 
@@ -77,14 +107,12 @@ namespace Planar3Coloring
                         _availableColors[n].Remove(color);
                         verticesWithTakenColor.Add(n);
                     }
-                }
+
                 if (moveToNextColor)
                     continue;
-                if (s.Count > 0)//Continue coloring separator
-                {
-                    if (BruteForceColoring(components, s))
-                        return true;
-                }
+
+                if (DnCColoring(components, s))
+                    return true;
 
                 //Reverse changes
                 foreach (int vertex in verticesWithTakenColor)
@@ -97,7 +125,7 @@ namespace Planar3Coloring
         {
             List<UndirectedGraph<int, IEdge<int>>> components = new List<UndirectedGraph<int, IEdge<int>>>();
             HashSet<int> vertices = g.Vertices.ToHashSet();
-            while(vertices.Count>0)
+            while (vertices.Count > 0)
             {
                 UndirectedGraph<int, IEdge<int>> component = new UndirectedGraph<int, IEdge<int>>(false);
                 Queue<int> queue = new Queue<int>();
@@ -105,12 +133,12 @@ namespace Planar3Coloring
                 vertices.Remove(v);
                 queue.Enqueue(v);
                 component.AddVertex(v);
-                while(queue.Count>0)
+                while (queue.Count > 0)
                 {
                     v = queue.Dequeue();
-                    foreach(int n in g.AdjacentVertices(v))
+                    foreach (int n in g.AdjacentVertices(v))
                     {
-                        if(vertices.Contains(n))
+                        if (vertices.Contains(n))
                         {
                             component.AddVertex(n);
                             queue.Enqueue(n);
