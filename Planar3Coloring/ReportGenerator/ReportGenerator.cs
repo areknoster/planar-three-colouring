@@ -22,7 +22,7 @@ namespace ReportGenerator
             for (int i = 0; i <= numberOfRandom; i++)
             {
                 var g = GraphGenerator.SimpleRandomPlanar(i * step, density);
-                examples.Add(new Example($"random", g, density));
+                examples.Add(new Example($"random connected", g, density));
             }
 
             return examples;
@@ -47,18 +47,16 @@ namespace ReportGenerator
 
     public class ReportGenerator
     {
+        private List<(Example, List<Check>)> _data;
         private List<IColoringFinder> algorithms;
         private TimeSpan _timeout;
 
-        public ReportGenerator(TimeSpan timeout)
+        public ReportGenerator(TimeSpan timeout, List<IColoringFinder> algorithms)
         {
             _timeout = timeout;
-            algorithms = new List<IColoringFinder>()
-            {
-                new BruteForceColouringFinder(),
-                new DnCColoringBasic(),
-                new DnCColoringParallel()
-            };
+            this.algorithms = algorithms;
+            _data = new List<(Example, List<Check>)>();
+
         }
 
         private enum Result
@@ -75,9 +73,9 @@ namespace ReportGenerator
             public Result result;
         }
 
-        private void WriteCsv(List<(Example, List<Check>)> data)
+        public void WriteCsv(string path)
         {
-            using (var w = new StreamWriter("results.csv"))
+            using (var w = new StreamWriter(path))
             {
                 //write header
                 var header = new List<string>() {"Graph", "Vertices", "Edges", "Density"};
@@ -91,7 +89,7 @@ namespace ReportGenerator
                     header.AddRange(columns);
                 }
                 w.WriteLine(Strings.Join(header.ToArray(), ","));
-                foreach (var row in data)
+                foreach (var row in _data)
                 {
                     var elements = new List<string>();
                     elements.AddRange(new string[]
@@ -114,10 +112,9 @@ namespace ReportGenerator
 
         public void RunAlgorithms(List<Example> examples)
         {
-            var data = new List<(Example, List<Check>)>(examples.Count);
             foreach (var example in examples)
                 {
-                    data.Add((example, new List<Check>(algorithms.Count)));
+                    _data.Add((example, new List<Check>(algorithms.Count)));
 
                     Console.WriteLine($"{example.Name} vertices={example.VerticesCount} edges={example.EdgesCount} density={example.Density} ");
                     foreach (var alg in algorithms)
@@ -132,7 +129,7 @@ namespace ReportGenerator
                         {
                             check.result = Result.Timeout;
                             check.elapsed = _timeout;
-                            data.Last().Item2.Add(check);
+                            _data.Last().Item2.Add(check);
                             Console.WriteLine($"{alg.Name} v={example.VerticesCount} e={example.EdgesCount} : Timeout");
                             continue;
                         }
@@ -152,12 +149,10 @@ namespace ReportGenerator
                             check.result = Result.Uncolorable;
                         }
                         check.elapsed = sw.Elapsed;
-                        Console.WriteLine($"{alg.Name}: {check.elapsed.TotalMilliseconds}");
-                        data.Last().Item2.Add(check);
+                        Console.WriteLine($"{alg.Name}: elapsed={check.elapsed.TotalMilliseconds} result={check.result.ToString()}");
+                        _data.Last().Item2.Add(check);
                     }
                 }
-
-            WriteCsv(data);
         }
     }
 }
