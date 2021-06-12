@@ -56,7 +56,6 @@ namespace ReportGenerator
             _timeout = timeout;
             this.algorithms = algorithms;
             _data = new List<(Example, List<Check>)>();
-
         }
 
         private enum Result

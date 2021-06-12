@@ -1,12 +1,14 @@
 ﻿using QuikGraph;
+using QuikGraph.Algorithms.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
 {
-    public class DnCColoringParallel : IColoringFinder
+    public class DnCColoringImproved : IColoringFinder
     {
         private UndirectedGraph<int, IEdge<int>> _graph;
         private HashSet<GraphColor>[] _availableColors;
@@ -38,26 +40,22 @@ namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
             return _coloring.Select(c => c.Value).ToArray();
         }
 
-        public string Name => "DnCColoringParallel";
+        public string Name => "DnCColoring";
 
         private (bool isColorable, int? notColorableComponentIndex) DnCColoring((List<UndirectedGraph<int, IEdge<int>>> list, Dictionary<int, int> dict) components, HashSet<int> s)
         {
             //Separator colored
             if (s.Count == 0)
             {
-                bool canBeColored = true;
-                int? notColorableComponentIndex = null;
-                Parallel.ForEach(components.list, (UndirectedGraph<int, IEdge<int>> component, ParallelLoopState state) =>
+                foreach (var component in components.list)
                 {
-                    notColorableComponentIndex = components.list.IndexOf(component);
                     if (component.VertexCount < 15)
                     {
                         //Can't find separator for component - color using bruteforce
                         if (!DnCColoring((new List<UndirectedGraph<int, IEdge<int>>>(), new Dictionary<int, int>()),
                                                 new HashSet<int>(component.Vertices)).isColorable)
                         {
-                            canBeColored = false;
-                            state.Break();
+                            return (false, components.list.IndexOf(component));
                         }
                     }
                     else
@@ -69,12 +67,12 @@ namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
                         (List<UndirectedGraph<int, IEdge<int>>>, Dictionary<int, int>) componentsPrim = FindComponents(componentCopy);
                         if (!DnCColoring(componentsPrim, sPrim).isColorable)
                         {
-                            canBeColored = false;
-                            state.Break();
+                            return (false, components.list.IndexOf(component));
                         }
                     }
-                });
-                return (canBeColored, notColorableComponentIndex);
+                }
+                //all components colored successfully
+                return (true, null);
             }
 
             //Separator still not colored

@@ -20,6 +20,13 @@ namespace Planar3Coloring.Benchmark
         }
 
         [Benchmark]
+        public void DnCColoringImproved()
+        {
+            IColoringFinder coloringFinder = new DnCColoringImproved();
+            coloringFinder.Find3Colorings(graph);
+        }
+
+        [Benchmark]
         public void DnCColoringParallel()
         {
             IColoringFinder coloringFinder = new DnCColoringParallel();
