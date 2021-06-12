@@ -1,6 +1,6 @@
 using System;
 using QuikGraph;
-namespace Planar3Coloring.Test
+namespace Planar3Coloring
 {
     public static class ColoringChecker
     {

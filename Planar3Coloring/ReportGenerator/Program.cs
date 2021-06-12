@@ -10,8 +10,13 @@ namespace ReportGenerator
         static void Main(string[] args)
         {
             var examples = new List<Example>();
-            examples.AddRange( RandomExamplesGenerator.GenerateRandomExamples(30, 10, 0.15));
-            var generator = new ReportGenerator();
+
+            for (double density = 0.05; density < 0.15; density += 0.02)
+            {
+                examples.AddRange( RandomExamplesGenerator.GenerateRandomExamples(10, 5, density));
+            }
+           
+            var generator = new ReportGenerator(TimeSpan.FromSeconds(10));
             generator.RunAlgorithms(examples);
         }
     }
