@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Planar3Coloring.GrahGenerator;
 using Xunit;
 
 namespace Planar3Coloring.Test
@@ -10,7 +11,7 @@ namespace Planar3Coloring.Test
         [Fact]
         public void CorrectDivisionOfFaceMultipleConnections()
         {
-            var face = new GraphGenerator.Face(new Random(), new List<int>()
+            var face = new Face(new Random(), new List<int>()
             {
                 0, 1, 2, 3, 4
             });
@@ -24,7 +25,7 @@ namespace Planar3Coloring.Test
         [Fact]
         public void CorrectDivisionOfFaceSingleConnection()
         {
-            var face = new GraphGenerator.Face(new Random(), new List<int>()
+            var face = new Face(new Random(), new List<int>()
             {
                 3,0,1,2
             });

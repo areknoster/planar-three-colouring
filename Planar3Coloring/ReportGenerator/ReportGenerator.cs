@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic;
 using Planar3Coloring;
+using Planar3Coloring.GrahGenerator;
 using Planar3Coloring.Test;
 using QuikGraph;
 
