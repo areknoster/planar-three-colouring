@@ -30,7 +30,6 @@ namespace Planar3Coloring.ColoringFinder
 
             public GraphColor[] Find()
             {
-                sw = Stopwatch.StartNew();
                 if (!TryColors(0))
                 {
                     return null;
@@ -40,10 +39,6 @@ namespace Planar3Coloring.ColoringFinder
 
             private bool TryColors(int vertex)
             {
-                if (vertex % 5 == 0 && sw.Elapsed.Seconds >= 10)
-                {
-                    throw new TimeoutException();
-                }
                 if (vertex == graph.VertexCount) {
                     return true;
                 }
