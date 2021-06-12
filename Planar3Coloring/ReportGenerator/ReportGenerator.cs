@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic;
 using Planar3Coloring;
-using Planar3Coloring.GrahGenerator;
+using Planar3Coloring.ColoringFinder;
+using Planar3Coloring.ColoringFinder.DnCColoringFinder;
 using Planar3Coloring.Test;
 using QuikGraph;
 
@@ -48,7 +49,7 @@ namespace ReportGenerator
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
-                new DnCColoring(),
+                new DnCColoringParallel(),
             };
 
         }
@@ -89,17 +90,17 @@ namespace ReportGenerator
         {
             var data = new List<(string, List<Check>)>(examples.Count);
             foreach (var example in examples)
-            {
-                data.Add((example.Name, new List<Check>(algorithms.Count)));
-
-                Console.WriteLine(example.Name);
-                foreach (var alg in algorithms)
                 {
-                    var check = new Check();
-                    var sw = new Stopwatch();
+                    data.Add((example.Name, new List<Check>(algorithms.Count)));
 
-                    //try
-                    //{
+                    Console.WriteLine(example.Name);
+                    foreach (var alg in algorithms)
+                    {
+                        var check = new Check();
+                        var sw = new Stopwatch();
+
+                        //try
+                        //{
                         sw.Start();
                         var coloring = alg.Find3Colorings(example.Graph);
                         sw.Stop();
@@ -107,6 +108,8 @@ namespace ReportGenerator
                         {
                             if (!ColoringChecker.CheckColoring(example.Graph, coloring))
                             {
+                                //for (int i = 0; i < coloring.Length; i++)
+                                //    Console.WriteLine($"Vertex: {i} Color: {coloring[i]}");
                                 throw new Exception("Wrong coloring output!");
                             }
 
@@ -116,17 +119,18 @@ namespace ReportGenerator
                         {
                             check.result = Result.Uncolorable;
                         }
-                    //}
-                    //catch
-                    //{
-                    //    check.result = Result.Error;
-                    //}
+                        //}
+                        //catch
+                        //{
+                        //    check.result = Result.Error;
+                        //}
 
 
-                    check.elapsed = sw.Elapsed;
-                    data.Last().Item2.Add(check);
+                        check.elapsed = sw.Elapsed;
+                        Console.WriteLine($"{alg.Name}: {check.elapsed.TotalMilliseconds}");
+                        data.Last().Item2.Add(check);
+                    }
                 }
-            }
 
             WriteCsv(data);
         }

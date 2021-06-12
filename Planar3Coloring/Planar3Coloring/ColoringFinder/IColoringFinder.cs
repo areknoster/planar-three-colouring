@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using QuikGraph;
 
-namespace Planar3Coloring
+namespace Planar3Coloring.ColoringFinder
 {
     public interface IColoringFinder
     {
