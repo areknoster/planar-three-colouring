@@ -49,7 +49,6 @@ namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
                 int? notColorableComponentIndex = null;
                 Parallel.ForEach(components.list, (UndirectedGraph<int, IEdge<int>> component, ParallelLoopState state) =>
                 {
-                    notColorableComponentIndex = components.list.IndexOf(component);
                     if (component.VertexCount < 15)
                     {
                         //Can't find separator for component - color using bruteforce
@@ -57,6 +56,7 @@ namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
                                                 new HashSet<int>(component.Vertices)).isColorable)
                         {
                             canBeColored = false;
+                            notColorableComponentIndex = components.list.IndexOf(component);
                             state.Break();
                         }
                     }
@@ -70,6 +70,7 @@ namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
                         if (!DnCColoring(componentsPrim, sPrim).isColorable)
                         {
                             canBeColored = false;
+                            notColorableComponentIndex = components.list.IndexOf(component);
                             state.Break();
                         }
                     }

@@ -87,15 +87,16 @@ namespace ReportGenerator
                     };
                     header.AddRange(columns);
                 }
+
                 w.WriteLine(Strings.Join(header.ToArray(), ","));
                 foreach (var row in _data)
                 {
                     var elements = new List<string>();
                     elements.AddRange(new string[]
                     {
-                        row.Item1.Name, 
-                        row.Item1.VerticesCount.ToString(), 
-                        row.Item1.EdgesCount.ToString(), 
+                        row.Item1.Name,
+                        row.Item1.VerticesCount.ToString(),
+                        row.Item1.EdgesCount.ToString(),
                         row.Item1.Density.ToString(),
                     });
                     foreach (var check in row.Item2)
@@ -109,19 +110,24 @@ namespace ReportGenerator
             }
         }
 
-        public void RunAlgorithms(List<Example> examples)
+        public void RunAlgorithms(List<Example> examples, TimeSpan maxTime)
         {
+            var globalTime = new Stopwatch();
+            globalTime.Start();
             foreach (var example in examples)
-                {
-                    _data.Add((example, new List<Check>(algorithms.Count)));
+            {
+                _data.Add((example, new List<Check>(algorithms.Count)));
 
-                    Console.WriteLine($"{example.Name} vertices={example.VerticesCount} edges={example.EdgesCount} density={example.Density} ");
-                    foreach (var alg in algorithms)
+                Console.WriteLine(
+                    $"{example.Name} vertices={example.VerticesCount} edges={example.EdgesCount} density={example.Density} ");
+                foreach (var alg in algorithms)
+                {
+                    var check = new Check();
+                    var sw = new Stopwatch();
+                    GraphColor[] coloring = new GraphColor[] { };
+
+                    try
                     {
-                        var check = new Check();
-                        var sw = new Stopwatch();
-                        GraphColor[] coloring = new GraphColor[] { };
-                        
                         sw.Start();
                         var task = Task.Run(() => coloring = alg.Find3Colorings(example.Graph));
                         if (!task.Wait(_timeout))
@@ -129,29 +135,47 @@ namespace ReportGenerator
                             check.result = Result.Timeout;
                             check.elapsed = _timeout;
                             _data.Last().Item2.Add(check);
-                            Console.WriteLine($"{alg.Name} v={example.VerticesCount} e={example.EdgesCount} : Timeout");
+                            Console.WriteLine(
+                                $"{alg.Name} v={example.VerticesCount} e={example.EdgesCount} : Timeout");
                             continue;
                         }
-                        sw.Stop();
-                        
-                        if (coloring != null)
-                        {
-                            if (!ColoringChecker.CheckColoring(example.Graph, coloring))
-                            {
-                                throw new Exception("Wrong coloring output!");
-                            }
 
-                            check.result = Result.Colorable;
-                        }
-                        else
-                        {
-                            check.result = Result.Uncolorable;
-                        }
-                        check.elapsed = sw.Elapsed;
-                        Console.WriteLine($"{alg.Name}: elapsed={check.elapsed.TotalMilliseconds} result={check.result.ToString()}");
-                        _data.Last().Item2.Add(check);
+                        sw.Stop();
                     }
+                    catch
+                    {
+                        check.result = Result.Error;
+                        _data.Last().Item2.Add(check);
+                        continue;
+                    }
+
+
+                    if (coloring != null)
+                    {
+                        if (!ColoringChecker.CheckColoring(example.Graph, coloring))
+                        {
+                            check.result = Result.Error;
+                            _data.Last().Item2.Add(check);
+                            continue;
+                        }
+
+                        check.result = Result.Colorable;
+                    }
+                    else
+                    {
+                        check.result = Result.Uncolorable;
+                    }
+
+                    check.elapsed = sw.Elapsed;
+                    Console.WriteLine(
+                        $"{alg.Name}: elapsed={check.elapsed.TotalMilliseconds} result={check.result.ToString()}");
+                    _data.Last().Item2.Add(check);
                 }
+                if (globalTime.Elapsed > maxTime)
+                {
+                    return;
+                }
+            }
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
             return _coloring.Select(c => c.Value).ToArray();
         }
 
-        public string Name => "DnCColoring";
+        public string Name => "DnCColoringImproved";
 
         private (bool isColorable, int? notColorableComponentIndex) DnCColoring((List<UndirectedGraph<int, IEdge<int>>> list, Dictionary<int, int> dict) components, HashSet<int> s)
         {
