@@ -4,7 +4,7 @@ using System.Linq;
 using System;
 using System.Diagnostics;
 
-namespace Planar3Coloring
+namespace Planar3Coloring.ColoringFinder
 {
     public class BruteForceColouringFinder : IColoringFinder
     {

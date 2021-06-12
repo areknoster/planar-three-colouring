@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic;
 using Planar3Coloring;
+using Planar3Coloring.ColoringFinder;
+using Planar3Coloring.ColoringFinder.DnCColoringFinder;
 using Planar3Coloring.Test;
 using QuikGraph;
 
@@ -47,7 +49,7 @@ namespace ReportGenerator
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
-                new DnCColoringFinder(),
+                new DnCColoringParallel(),
             };
 
         }
