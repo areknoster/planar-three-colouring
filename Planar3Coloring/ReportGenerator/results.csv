@@ -1,51 +1,22 @@
-random with 2 vertices and 1 edges,00:00:00.0101215,Colorable,00:00:00.0156009,Colorable
-random with 10 vertices and 13 edges,00:00:00.0000516,Colorable,00:00:00.0029380,Colorable
-random with 20 vertices and 26 edges,00:00:00.0000207,Colorable,00:00:00.0001433,Colorable
-random with 30 vertices and 44 edges,00:00:01.4325746,Uncolorable,00:00:00.0003857,Error
-random with 40 vertices and 61 edges,00:00:01.5037126,Uncolorable,00:00:00.0003339,Error
-random with 50 vertices and 75 edges,00:00:01.8058713,Uncolorable,00:00:00.0005838,Error
-random with 60 vertices and 91 edges,00:00:01.8491623,Uncolorable,00:00:00.0005791,Error
-random with 70 vertices and 106 edges,00:00:01.8309265,Uncolorable,00:00:00.0005495,Error
-random with 80 vertices and 129 edges,00:00:01.9859616,Uncolorable,00:00:00.0064118,Error
-random with 90 vertices and 143 edges,00:00:02.0974989,Uncolorable,00:00:00.0008046,Error
-random with 100 vertices and 166 edges,00:00:02.1106532,Uncolorable,00:00:00.0006816,Error
-random with 110 vertices and 179 edges,00:00:02.0949084,Uncolorable,00:00:00.0005405,Error
-random with 120 vertices and 190 edges,00:00:02.1035886,Uncolorable,00:00:00.0007622,Error
-random with 130 vertices and 202 edges,00:00:02.1426564,Uncolorable,00:00:00.0011763,Error
-random with 140 vertices and 217 edges,00:00:02.1804035,Uncolorable,00:00:00.0006786,Error
-random with 150 vertices and 234 edges,00:00:02.1957757,Uncolorable,00:00:00.0013286,Error
-random with 160 vertices and 252 edges,00:00:02.2267359,Uncolorable,00:00:00.0006254,Error
-random with 170 vertices and 268 edges,00:00:02.2861157,Uncolorable,00:00:00.0006603,Error
-random with 180 vertices and 282 edges,00:00:02.3264886,Uncolorable,00:00:00.0007827,Error
-random with 190 vertices and 297 edges,00:00:02.3236545,Uncolorable,00:00:00.0007581,Error
-random with 200 vertices and 315 edges,00:00:02.3261616,Uncolorable,00:00:00.0007639,Error
-random with 210 vertices and 328 edges,00:00:02.5320262,Uncolorable,00:00:00.0008117,Error
-random with 220 vertices and 341 edges,00:00:02.4866883,Uncolorable,00:00:00.0008642,Error
-random with 230 vertices and 357 edges,00:00:02.5352808,Uncolorable,00:00:00.0013545,Error
-random with 240 vertices and 371 edges,00:00:02.5309859,Uncolorable,00:00:00.0006898,Error
-random with 250 vertices and 386 edges,00:00:02.5515351,Uncolorable,00:00:00.0008518,Error
-random with 260 vertices and 400 edges,00:00:02.4832907,Uncolorable,00:00:00.0008216,Error
-random with 270 vertices and 411 edges,00:00:02.5208381,Uncolorable,00:00:00.0006565,Error
-random with 280 vertices and 432 edges,00:00:02.5218826,Uncolorable,00:00:00.0006196,Error
-random with 290 vertices and 450 edges,00:00:02.5939880,Uncolorable,00:00:00.0008708,Error
-random with 300 vertices and 470 edges,00:00:02.5735076,Uncolorable,00:00:00.0007111,Error
-random with 310 vertices and 486 edges,00:00:02.5900079,Uncolorable,00:00:00.0008017,Error
-random with 320 vertices and 501 edges,00:00:02.6952681,Uncolorable,00:00:00.0007168,Error
-random with 330 vertices and 517 edges,00:00:02.7181459,Uncolorable,00:00:00.0007106,Error
-random with 340 vertices and 533 edges,00:00:02.6721654,Uncolorable,00:00:00.0007420,Error
-random with 350 vertices and 549 edges,00:00:02.8808992,Uncolorable,00:00:00.0007944,Error
-random with 360 vertices and 565 edges,00:00:02.6745640,Uncolorable,00:00:00.0007650,Error
-random with 370 vertices and 581 edges,00:00:02.6910336,Uncolorable,00:00:00.0008227,Error
-random with 380 vertices and 599 edges,00:00:02.7462962,Uncolorable,00:00:00.0018093,Error
-random with 390 vertices and 612 edges,00:00:02.6110472,Uncolorable,00:00:00.0013218,Error
-random with 400 vertices and 629 edges,00:00:02.6376462,Uncolorable,00:00:00.0009360,Error
-random with 410 vertices and 648 edges,00:00:02.6977364,Uncolorable,00:00:00.0009745,Error
-random with 420 vertices and 661 edges,00:00:02.7548526,Uncolorable,00:00:00.0008948,Error
-random with 430 vertices and 681 edges,00:00:02.7313989,Uncolorable,00:00:00.0014362,Error
-random with 440 vertices and 695 edges,00:00:02.7811008,Uncolorable,00:00:00.0014514,Error
-random with 450 vertices and 711 edges,00:00:02.7278162,Uncolorable,00:00:00.0010814,Error
-random with 460 vertices and 725 edges,00:00:02.6945011,Uncolorable,00:00:00.0010742,Error
-random with 470 vertices and 743 edges,00:00:02.8050400,Uncolorable,00:00:00.0011086,Error
-random with 480 vertices and 759 edges,00:00:02.7996305,Uncolorable,00:00:00.0012440,Error
-random with 490 vertices and 774 edges,00:00:03.0152598,Uncolorable,00:00:00.0012015,Error
-random with 500 vertices and 791 edges,00:00:02.9553138,Uncolorable,00:00:00.0010759,Error
+Graph,Vertices,Edges,Density,BruteForceColoring_elapsed_ms,BruteForceColoring_result,DnCColoring_elapsed_ms,DnCColoring_result,DnCColoringParallel_elapsed_ms,DnCColoringParallel_result
+random,2,1,0.3,00:00:00.0142531,Colorable,00:00:00.0182251,Colorable,00:00:00.0224269,Colorable
+random,10,15,0.3,00:00:00.0001639,Colorable,00:00:00.0010969,Colorable,00:00:00.0003859,Colorable
+random,20,32,0.3,00:00:00.0000693,Colorable,00:00:00.0002047,Colorable,00:00:00.0005096,Colorable
+random,30,48,0.3,00:00:00.0001234,Colorable,00:00:00.0002663,Colorable,00:00:00.0003149,Colorable
+random,40,64,0.3,00:00:10,Timeout,00:00:00.0346793,Uncolorable,00:00:00.0255055,Uncolorable
+random,50,78,0.3,00:00:10,Timeout,00:00:00.0956232,Uncolorable,00:00:00.0323738,Uncolorable
+random,60,100,0.3,00:00:10,Timeout,00:00:00.1551061,Uncolorable,00:00:00.0376709,Uncolorable
+random,70,113,0.3,00:00:10,Timeout,00:00:04.5295154,Uncolorable,00:00:01.7577219,Uncolorable
+random,80,132,0.3,00:00:10,Timeout,00:00:10,Timeout,00:00:10,Timeout
+random,90,143,0.3,00:00:10,Timeout,00:00:10,Timeout,00:00:00.0009114,Uncolorable
+random,100,163,0.3,00:00:10,Timeout,00:00:00.0048571,Uncolorable,00:00:00.0042626,Uncolorable
+random,110,183,0.3,00:00:10,Timeout,00:00:00.0063656,Uncolorable,00:00:00.0061881,Uncolorable
+random,120,199,0.3,00:00:10,Timeout,00:00:00.0012264,Uncolorable,00:00:00.0021294,Uncolorable
+random,130,217,0.3,00:00:10,Timeout,00:00:00.0011951,Uncolorable,00:00:00.0064801,Uncolorable
+random,140,237,0.3,00:00:10,Timeout,00:00:00.0049654,Uncolorable,00:00:00.0095842,Uncolorable
+random,150,256,0.3,00:00:10,Timeout,00:00:00.0045220,Uncolorable,00:00:00.0030735,Uncolorable
+random,160,271,0.3,00:00:10,Timeout,00:00:00.0047977,Uncolorable,00:00:00.0043624,Uncolorable
+random,170,288,0.3,00:00:10,Timeout,00:00:04.1124762,Uncolorable,00:00:00.0287133,Uncolorable
+random,180,302,0.3,00:00:10,Timeout,00:00:00.0148474,Uncolorable,00:00:00.0047029,Uncolorable
+random,190,319,0.3,00:00:10,Timeout,00:00:06.1152036,Uncolorable,00:00:00.0061511,Uncolorable
+random,200,343,0.3,00:00:10,Timeout,00:00:10,Timeout,00:00:10,Timeout

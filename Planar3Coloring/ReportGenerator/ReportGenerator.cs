@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualBasic;
 using Planar3Coloring;
 using Planar3Coloring.ColoringFinder;
 using Planar3Coloring.ColoringFinder.DnCColoringFinder;
-using Planar3Coloring.Test;
+using Planar3Coloring.GrahGenerator;
 using QuikGraph;
+using System.Threading.Tasks;
+
 
 namespace ReportGenerator
 {
@@ -21,7 +22,7 @@ namespace ReportGenerator
             for (int i = 0; i <= numberOfRandom; i++)
             {
                 var g = GraphGenerator.SimpleRandomPlanar(i * step, density);
-                examples.Add(new Example($"random with {g.VertexCount} vertices and {g.EdgeCount} edges", g));
+                examples.Add(new Example($"random connected", g, density));
             }
 
             return examples;
@@ -30,30 +31,31 @@ namespace ReportGenerator
 
     public struct Example
     {
-        public Example(string name, UndirectedGraph<int, IEdge<int>> graph)
+        public Example(string name, UndirectedGraph<int, IEdge<int>> graph, double density)
         {
             Name = name;
             Graph = graph;
+            Density = density;
         }
 
         public string Name;
+        public int VerticesCount => Graph.VertexCount;
+        public int EdgesCount => Graph.EdgeCount;
+        public double Density;
         public UndirectedGraph<int, IEdge<int>> Graph;
     }
 
     public class ReportGenerator
     {
+        private List<(Example, List<Check>)> _data;
         private List<IColoringFinder> algorithms;
+        private TimeSpan _timeout;
 
-        public ReportGenerator()
+        public ReportGenerator(TimeSpan timeout, List<IColoringFinder> algorithms)
         {
-            algorithms = new List<IColoringFinder>()
-            {
-                new BruteForceColouringFinder(),
-                new DnCColoringBasic(),
-                new DnCColoringImproved(),
-                new DnCColoringParallel(),
-            };
-
+            _timeout = timeout;
+            this.algorithms = algorithms;
+            _data = new List<(Example, List<Check>)>();
         }
 
         private enum Result
@@ -61,6 +63,7 @@ namespace ReportGenerator
             Colorable,
             Uncolorable,
             Error,
+            Timeout,
         }
 
         private struct Check
@@ -69,14 +72,32 @@ namespace ReportGenerator
             public Result result;
         }
 
-        private void WriteCsv(List<(string, List<Check>)> data)
+        public void WriteCsv(string path)
         {
-            using (var w = new StreamWriter("results.csv"))
+            using (var w = new StreamWriter(path))
             {
-                foreach (var row in data)
+                //write header
+                var header = new List<string>() {"Graph", "Vertices", "Edges", "Density"};
+                foreach (var alg in algorithms)
+                {
+                    var columns = new List<string>()
+                    {
+                        $"{alg.Name}_elapsed_ms",
+                        $"{alg.Name}_result",
+                    };
+                    header.AddRange(columns);
+                }
+                w.WriteLine(Strings.Join(header.ToArray(), ","));
+                foreach (var row in _data)
                 {
                     var elements = new List<string>();
-                    elements.Add(row.Item1);
+                    elements.AddRange(new string[]
+                    {
+                        row.Item1.Name, 
+                        row.Item1.VerticesCount.ToString(), 
+                        row.Item1.EdgesCount.ToString(), 
+                        row.Item1.Density.ToString(),
+                    });
                     foreach (var check in row.Item2)
                     {
                         elements.Add(check.elapsed.ToString());
@@ -90,28 +111,33 @@ namespace ReportGenerator
 
         public void RunAlgorithms(List<Example> examples)
         {
-            var data = new List<(string, List<Check>)>(examples.Count);
             foreach (var example in examples)
                 {
-                    data.Add((example.Name, new List<Check>(algorithms.Count)));
+                    _data.Add((example, new List<Check>(algorithms.Count)));
 
-                    Console.WriteLine(example.Name);
+                    Console.WriteLine($"{example.Name} vertices={example.VerticesCount} edges={example.EdgesCount} density={example.Density} ");
                     foreach (var alg in algorithms)
                     {
                         var check = new Check();
                         var sw = new Stopwatch();
-
-                        //try
-                        //{
+                        GraphColor[] coloring = new GraphColor[] { };
+                        
                         sw.Start();
-                        var coloring = alg.Find3Colorings(example.Graph);
+                        var task = Task.Run(() => coloring = alg.Find3Colorings(example.Graph));
+                        if (!task.Wait(_timeout))
+                        {
+                            check.result = Result.Timeout;
+                            check.elapsed = _timeout;
+                            _data.Last().Item2.Add(check);
+                            Console.WriteLine($"{alg.Name} v={example.VerticesCount} e={example.EdgesCount} : Timeout");
+                            continue;
+                        }
                         sw.Stop();
+                        
                         if (coloring != null)
                         {
                             if (!ColoringChecker.CheckColoring(example.Graph, coloring))
                             {
-                                //for (int i = 0; i < coloring.Length; i++)
-                                //    Console.WriteLine($"Vertex: {i} Color: {coloring[i]}");
                                 throw new Exception("Wrong coloring output!");
                             }
 
@@ -121,20 +147,11 @@ namespace ReportGenerator
                         {
                             check.result = Result.Uncolorable;
                         }
-                        //}
-                        //catch
-                        //{
-                        //    check.result = Result.Error;
-                        //}
-
-
                         check.elapsed = sw.Elapsed;
-                        Console.WriteLine($"{alg.Name}: {check.elapsed.TotalMilliseconds}");
-                        data.Last().Item2.Add(check);
+                        Console.WriteLine($"{alg.Name}: elapsed={check.elapsed.TotalMilliseconds} result={check.result.ToString()}");
+                        _data.Last().Item2.Add(check);
                     }
                 }
-
-            WriteCsv(data);
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Planar3Coloring.ColoringFinder;
+using Planar3Coloring.ColoringFinder.DnCColoringFinder;
 
 namespace ReportGenerator
 {
@@ -9,24 +11,32 @@ namespace ReportGenerator
     {
         static void Main(string[] args)
         {
-            // string projDir = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
-            // string folderName = "Data";
-            var examples = new List<Example>();
-            // for (int i = 1; i <= 9; i++)
-            // {
-            //     string filename = $"planar_conn.{i}.txt";
-            //     string filepath = Path.Combine(projDir, folderName, filename);
-            //     var downloadedGraphs = GraphConverter.Convert(filepath);
-            //     var downloadedExamples = downloadedGraphs.Select((g) => new Example()
-            //     {
-            //         Graph = g,
-            //         Name = $"downloaded with {g.VertexCount} vertices and {g.EdgeCount} edges",
-            //     });
-            //     examples.AddRange(downloadedExamples);
-            // }
-            examples.AddRange( RandomExamplesGenerator.GenerateRandomExamples(30, 10, 0.15));
-            var generator = new ReportGenerator();
-            generator.RunAlgorithms(examples);
+            var variousExamples = new List<Example>();
+            
+            for (double density = 0.05; density <= 0.5; density += 0.05)
+            {
+                variousExamples.AddRange( RandomExamplesGenerator.GenerateRandomExamples(20, 10, density));
+            }
+            
+            var allAlgorithms = new List<IColoringFinder>()
+            {
+                new BruteForceColouringFinder(),
+                new DnCColoringBasic(),
+                new DnCColoringParallel()
+            };
+            var generator = new ReportGenerator(TimeSpan.FromSeconds(10), allAlgorithms);
+            generator.RunAlgorithms(variousExamples);
+            generator.WriteCsv("all_algorithms.csv");
+            
+            // test just DnC
+            var longExamples = RandomExamplesGenerator.GenerateRandomExamples(50, 20, 0.1);
+            var justDnCGenerator = new ReportGenerator(
+                TimeSpan.FromMinutes(1),
+                new List<IColoringFinder>() {new DnCColoringBasic()}
+            );
+            justDnCGenerator.RunAlgorithms(longExamples);
+            justDnCGenerator.WriteCsv("just_dnc.csv");
+
         }
     }
 }

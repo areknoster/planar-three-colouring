@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Planar3Coloring.ColoringFinder;
 using Planar3Coloring.ColoringFinder.DnCColoringFinder;
+using Planar3Coloring.GrahGenerator;
 using QuikGraph;
 
 namespace Planar3Coloring.Benchmark
