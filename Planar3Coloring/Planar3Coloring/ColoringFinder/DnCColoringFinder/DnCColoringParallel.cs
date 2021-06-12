@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Planar3Coloring
+namespace Planar3Coloring.ColoringFinder.DnCColoringFinder
 {
-    public class DnCColoringFinder : IColoringFinder
+    public class DnCColoringParallel : IColoringFinder
     {
         private UndirectedGraph<int, IEdge<int>> _graph;
         private HashSet<GraphColor>[] _availableColors;
