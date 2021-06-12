@@ -49,6 +49,8 @@ namespace ReportGenerator
             algorithms = new List<IColoringFinder>()
             {
                 new BruteForceColouringFinder(),
+                new DnCColoringBasic(),
+                new DnCColoringImproved(),
                 new DnCColoringParallel(),
             };
 
