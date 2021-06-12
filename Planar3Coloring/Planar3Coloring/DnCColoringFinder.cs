@@ -38,7 +38,7 @@ namespace Planar3Coloring
                 if (!DnCColoring(components, S))
                     return null;
                 //Fast version
-                //if (!BruteForceColoring(new List<UndirectedGraph<int, IEdge<int>>>(), _graph.Vertices.ToHashSet()))
+                //if (!DnCColoring(new List<UndirectedGraph<int, IEdge<int>>>(), _graph.Vertices.ToHashSet()))
                 //    return null;
             }
             return _coloring.Select(c => c.Value).ToArray();
@@ -51,14 +51,17 @@ namespace Planar3Coloring
             //Separator colored
             if (s.Count == 0)
             {
-                foreach (UndirectedGraph<int, IEdge<int>> component in components)
+                bool canBeColored = true;
+                Parallel.ForEach(components, (UndirectedGraph<int, IEdge<int>> component, ParallelLoopState state) =>
+                {
                     if (component.VertexCount < 15)
                     {
                         //Can't find separator for component - color using bruteforce
                         if (!DnCColoring(new List<UndirectedGraph<int, IEdge<int>>>(),
                                                 new HashSet<int>(component.Vertices)))
                         {
-                            return false;
+                            canBeColored = false;
+                            state.Break();
                         }
                     }
                     else
@@ -70,10 +73,12 @@ namespace Planar3Coloring
                         List<UndirectedGraph<int, IEdge<int>>> componentsPrim = FindComponents(componentCopy);
                         if (!DnCColoring(componentsPrim, sPrim))
                         {
-                            return false;
+                            canBeColored = false;
+                            state.Break();
                         }
                     }
-                return true;
+                });
+                return canBeColored;
             }
 
             //Separator still not colored
