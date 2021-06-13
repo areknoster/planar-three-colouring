@@ -32,7 +32,7 @@ namespace ReportGenerator
             // test just DnC
             var longExamples = RandomExamplesGenerator.GenerateRandomExamples(50, 20, 0.1);
             var justDnCGenerator = new ReportGenerator(
-                TimeSpan.FromMinutes(20),
+                TimeSpan.FromSeconds(20),
                 new List<IColoringFinder>() {new DnCColoringImproved()}
             );
             justDnCGenerator.RunAlgorithms(longExamples, TimeSpan.FromMinutes(60));
